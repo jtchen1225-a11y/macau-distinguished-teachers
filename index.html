@@ -12,6 +12,7 @@
       --primary-hover: #172554;
       --secondary: #0d9488;
       --accent: #d97706;
+      --accent-dark: #b45309;
       --bg: #f8fafc;
       --card-bg: #ffffff;
       --text: #0f172a;
@@ -33,7 +34,7 @@
     header {
       background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #0d9488 100%);
       color: white;
-      padding: 40px 24px 32px;
+      padding: 42px 24px 34px;
       box-shadow: 0 4px 20px rgba(0,0,0,0.15);
       position: relative;
     }
@@ -54,22 +55,22 @@
       margin-bottom: 12px;
     }
     h1 {
-      font-size: 2.2rem;
+      font-size: 2.15rem;
       font-weight: 800;
       margin-bottom: 10px;
       letter-spacing: -0.02em;
     }
     .subtitle {
-      font-size: 1.05rem;
+      font-size: 1.02rem;
       color: #cbd5e1;
-      max-width: 900px;
-      margin-bottom: 24px;
+      max-width: 950px;
+      margin-bottom: 22px;
     }
     .meta-bar {
       display: flex;
       flex-wrap: wrap;
       gap: 16px;
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       color: #94a3b8;
       border-top: 1px solid rgba(255,255,255,0.15);
       padding-top: 16px;
@@ -134,7 +135,172 @@
       font-size: 0.8rem;
       color: var(--text-muted);
     }
-    
+
+    /* ============================================================
+       EXECUTIVE ACTION ROADMAP MODULE (學校行政會專用模組)
+       ============================================================ */
+    .roadmap-section {
+      background: var(--card-bg);
+      border-radius: 14px;
+      padding: 28px;
+      margin-bottom: 32px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+      border: 1px solid #cbd5e1;
+      position: relative;
+    }
+    .roadmap-section-header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding-bottom: 18px;
+      border-bottom: 2px solid #e2e8f0;
+      margin-bottom: 24px;
+    }
+    .roadmap-header-left h2 {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: #1e3a8a;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .roadmap-header-left p {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+    .roadmap-badge {
+      background: #eff6ff;
+      color: #1d4ed8;
+      border: 1px solid #bfdbfe;
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* 6 Pillars Timeline Grid */
+    .roadmap-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+      gap: 18px;
+      margin-bottom: 26px;
+    }
+    .roadmap-step-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 20px;
+      position: relative;
+      transition: all 0.2s;
+    }
+    .roadmap-step-card:hover {
+      border-color: #93c5fd;
+      background: #ffffff;
+      box-shadow: 0 4px 14px rgba(30,58,138,0.08);
+      transform: translateY(-2px);
+    }
+    .step-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .step-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #1e3a8a;
+      color: white;
+      font-size: 0.85rem;
+      font-weight: 800;
+    }
+    .step-category {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #0369a1;
+      background: #e0f2fe;
+      padding: 2px 10px;
+      border-radius: 999px;
+    }
+    .step-title {
+      font-size: 1.05rem;
+      font-weight: 750;
+      color: #0f172a;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .step-desc {
+      font-size: 0.86rem;
+      color: #475569;
+      line-height: 1.55;
+      margin-bottom: 12px;
+    }
+    .step-action-tag {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #15803d;
+      background: #f0fdf4;
+      border: 1px dashed #86efac;
+      padding: 6px 10px;
+      border-radius: 6px;
+    }
+
+    /* 5 Strategic Decision Principles Accordion/Grid */
+    .strategy-card {
+      background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%);
+      border: 1px solid #bbf7d0;
+      border-radius: 10px;
+      padding: 22px 24px;
+    }
+    .strategy-card-title {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: #166534;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .strategy-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 14px;
+    }
+    .strategy-item {
+      background: white;
+      border: 1px solid #dcfce7;
+      border-radius: 8px;
+      padding: 14px 16px;
+    }
+    .strategy-item h4 {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: #15803d;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .strategy-item p {
+      font-size: 0.84rem;
+      color: #334155;
+      line-height: 1.5;
+    }
+
     /* Charts Grid */
     .charts-grid {
       display: grid;
@@ -167,46 +333,6 @@
     .chart-wrapper {
       position: relative;
       height: 280px;
-    }
-    
-    /* Executive Key Insights Section */
-    .executive-card {
-      background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%);
-      border: 1px solid #bbf7d0;
-      border-radius: 12px;
-      padding: 24px 28px;
-      margin-bottom: 32px;
-      box-shadow: 0 4px 12px rgba(22, 163, 74, 0.05);
-    }
-    .executive-card h2 {
-      font-size: 1.3rem;
-      font-weight: 800;
-      color: #15803d;
-      margin-bottom: 14px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .insight-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 16px;
-    }
-    .insight-item {
-      background: white;
-      border: 1px solid #dcfce7;
-      border-radius: 8px;
-      padding: 16px;
-    }
-    .insight-item h3 {
-      font-size: 0.95rem;
-      font-weight: 700;
-      color: #166534;
-      margin-bottom: 6px;
-    }
-    .insight-item p {
-      font-size: 0.85rem;
-      color: #334155;
     }
 
     /* Table Section */
@@ -402,9 +528,9 @@
 
   <header>
     <div class="header-inner">
-      <span class="badge"><i class="fa-solid fa-shield-halved"></i> 權威官方核實版・全景大數據庫</span>
+      <span class="badge"><i class="fa-solid fa-shield-halved"></i> 官方特刊 OCR 全景校驗版・權威大數據庫</span>
       <h1>澳門非高等教育「卓越表現教師」歷屆獲獎大數據決策儀表板</h1>
-      <p class="subtitle">涵蓋第 1 屆 (2014/2015) 至第 11 屆 (2024/2025) 累計 171 位獲獎教師，經教育及青年發展局歷年官方特刊逐頁 OCR 視覺審核與教青局公報權威核對，提供學校獲獎統計、學段與學科分佈、公私立體系對比及行政會校政決策參照。</p>
+      <p class="subtitle">全面涵蓋第 1 屆 (2014/2015) 至第 11 屆 (2024/2025) 累計 171 位獲獎教師。經澳門特區政府教育及青年發展局歷年官方特刊逐頁對校，深度勘誤 28 項歷史誤植，並整合學校行政會卓越教師孵化推進行動路線圖與戰略決策矩陣。</p>
       
       <div class="meta-bar">
         <div class="meta-item"><i class="fa-regular fa-calendar-check"></i> 涵蓋學年：2014/2015 – 2024/2025 (共 11 屆)</div>
@@ -440,24 +566,140 @@
       </div>
     </div>
 
-    <!-- Executive Insights -->
-    <div class="executive-card">
-      <h2><i class="fa-solid fa-compass"></i> 行政會決策核心洞察與關鍵規律</h2>
-      <div class="insight-grid">
-        <div class="insight-item">
-          <h3>1. 雙雄領跑與校級生態梯隊</h3>
-          <p>培正（29人）與濠江（28人）合計佔比達 33.3%，形成制度化孵化與科研競賽引領優勢；第二梯隊蔡高（14人）、鏡平（12人）、勞校（9人）、教業（9人）、商訓（9人）各有特色名科（如蔡高音樂地理、鏡平奧賽STREAM、勞校科普歷史、商訓夜間回歸教育）。</p>
+    <!-- ============================================================
+         EXECUTIVE ACTION ROADMAP MODULE (學校行政會——卓越教師孵化推進行動路線圖)
+         ============================================================ -->
+    <section class="roadmap-section">
+      <div class="roadmap-section-header">
+        <div class="roadmap-header-left">
+          <h2><i class="fa-solid fa-sitemap"></i> 學校行政會——卓越教師孵化推進行動路線圖</h2>
+          <p>整合校政決策、人才梯隊蓄水、特色賽道佈局、成果攻堅與答辯評審的閉環推展體系</p>
         </div>
-        <div class="insight-item">
-          <h3>2. STEM 與人文歷史雙輪驅動</h3>
-          <p>數理科技類教師在各屆評審中極受重視（數學23人、物理19人、資科12人）；同時，文史與愛國愛澳教育亦佔據高權重（中文26人、歷史12人、品德公民5人），兼顧學科競賽國際榮譽與國家認同育人情懷。</p>
+        <span class="roadmap-badge"><i class="fa-solid fa-lightbulb"></i> 行政會專用行動方案</span>
+      </div>
+
+      <!-- 6 Pillars Timeline Grid -->
+      <div class="roadmap-grid">
+        <!-- 1. 體制改革 -->
+        <div class="roadmap-step-card">
+          <div class="step-top">
+            <span class="step-num">1</span>
+            <span class="step-category">體制機制</span>
+          </div>
+          <div class="step-title"><i class="fa-solid fa-users-gear" style="color:#2563eb;"></i> 體制改革：成立校級「申報專班」</div>
+          <div class="step-desc">
+            改變教師單打獨鬥窘境。由<strong>副校長親自掛帥</strong>，教研主任主管學術成果凝練與科組資源調配，文宣主筆負責教育敘事與視覺打磨，實現全校合力護航。
+          </div>
+          <div class="step-action-tag">
+            <i class="fa-solid fa-circle-check"></i> 核心抓手：打破部門壁壘，設立榮譽申報專項行政協調機制
+          </div>
         </div>
-        <div class="insight-item">
-          <h3>3. 幼小特職新賽道突圍藍海</h3>
-          <p>小學（17.5%）、幼稚園（6.4%）、職業技術（1.2%）及融合特教（0.6%）獲獎基數雖低，但在教青局多元教育均衡政策下，優質幼小班級經營、全人發展與職教課程協調員正成為突圍申報的關鍵著力點。</p>
+
+        <!-- 2. 梯隊建設 -->
+        <div class="roadmap-step-card">
+          <div class="step-top">
+            <span class="step-num">2</span>
+            <span class="step-category">人才蓄水</span>
+          </div>
+          <div class="step-title"><i class="fa-solid fa-seedling" style="color:#16a34a;"></i> 梯隊建設：建立「3+3 名師儲備池」</div>
+          <div class="step-desc">
+            建立<strong>「3位近期衝刺 + 3位中青年種子」</strong>蓄水池機制。破除臨急湊材料弊病，提早 3 年鎖定教齡 8–15 年、深具教學熱誠與口碑的骨幹，賦予重點專案負責人職權。
+          </div>
+          <div class="step-action-tag">
+            <i class="fa-solid fa-circle-check"></i> 核心抓手：提前 3 年納入培育計劃，滾動更新候選人資料包
+          </div>
+        </div>
+
+        <!-- 3. 賽道突圍 -->
+        <div class="roadmap-step-card">
+          <div class="step-top">
+            <span class="step-num">3</span>
+            <span class="step-category">戰略定位</span>
+          </div>
+          <div class="step-title"><i class="fa-solid fa-compass" style="color:#d97706;"></i> 賽道突圍：主攻「小學、幼教、德育特色」</div>
+          <div class="step-desc">
+            中學數理競賽已成白熱化紅海。主動策劃進軍<strong>小學全科班主任、幼兒感統蒙氏、特殊教育融合、職教大健康及品德公民特色</strong>等政策傾斜之專屬保護名額。
+          </div>
+          <div class="step-action-tag">
+            <i class="fa-solid fa-circle-check"></i> 核心抓手：發掘小幼職特優勢，避開紅海尋求差異化突圍
+          </div>
+        </div>
+
+        <!-- 4. 前置成果 -->
+        <div class="roadmap-step-card">
+          <div class="step-top">
+            <span class="step-num">4</span>
+            <span class="step-category">顯性指標</span>
+          </div>
+          <div class="step-title"><i class="fa-solid fa-award" style="color:#9333ea;"></i> 前置成果：全面攻堅《教學設計獎勵計劃》</div>
+          <div class="step-desc">
+            教青局《教學設計獎勵計劃》獲獎為參選<strong>第一硬通貨</strong>。同步借鑑培正、濠江經驗，鎖定國際奧賽（IMO/ISEF/IOI/iGEM）、全國科技發明或國家教學成果獎。
+          </div>
+          <div class="step-action-tag">
+            <i class="fa-solid fa-circle-check"></i> 核心抓手：提前 2 年立項攻堅教研成果獎與各類標誌性賽事
+          </div>
+        </div>
+
+        <!-- 5. 文本精造 -->
+        <div class="roadmap-step-card">
+          <div class="step-top">
+            <span class="step-num">5</span>
+            <span class="step-category">申報材料</span>
+          </div>
+          <div class="step-title"><i class="fa-solid fa-file-signature" style="color:#0891b2;"></i> 文本精造：嚴守 30 頁紅線與生命敘事</div>
+          <div class="step-desc">
+            嚴守 30 頁審批上限，告別平庸流水帳。進行雜誌級視覺排版與數據論證，核心架構聚焦<strong>「教育格言＋痛點獨創破解法＋1至2位被徹底改變人生命運的典型學生故事」</strong>。
+          </div>
+          <div class="step-action-tag">
+            <i class="fa-solid fa-circle-check"></i> 核心抓手：文宣主筆深度介入，凝練教育家精神與師德光芒
+          </div>
+        </div>
+
+        <!-- 6. 答辯演練 -->
+        <div class="roadmap-step-card">
+          <div class="step-top">
+            <span class="step-num">6</span>
+            <span class="step-category">專家評審</span>
+          </div>
+          <div class="step-title"><i class="fa-solid fa-microphone-lines" style="color:#dc2626;"></i> 答辯演練：1月開展 2-3 輪模擬專家面試</div>
+          <div class="step-desc">
+            於每年 1 月正式申報前夕，力邀校外資深教育評委及校內歷屆卓越教師組成模擬專家組，進行 <strong>2-3 輪高強度全真模擬答辯與材料壓力測試</strong>，精準優化現場發言。
+          </div>
+          <div class="step-action-tag">
+            <i class="fa-solid fa-circle-check"></i> 核心抓手：全真模擬面試答辯，打磨應答邏輯與氣場儀態
+          </div>
         </div>
       </div>
-    </div>
+
+      <!-- 5 Strategic Principles Integration -->
+      <div class="strategy-card">
+        <div class="strategy-card-title">
+          <i class="fa-solid fa-gem"></i> 行政會核心決策指引精華（五大落地法則）
+        </div>
+        <div class="strategy-grid">
+          <div class="strategy-item">
+            <h4><i class="fa-regular fa-clock"></i> 提早3年蓄水機制</h4>
+            <p>鎖定教齡 8–15 年之教學名師，制定 3 年週期目標，賦予主持校本新課程研發或帶領示範學科梯隊之重任，拒絕臨急拼湊。</p>
+          </div>
+          <div class="strategy-item">
+            <h4><i class="fa-solid fa-medal"></i> 標誌性硬核成果</h4>
+            <p>帶教學生奪得國際/全國頂級獎項或斬獲國家級教學成果獎，為評審委員提供無法撼動之客觀佐證與學界公信力。</p>
+          </div>
+          <div class="strategy-item">
+            <h4><i class="fa-solid fa-water"></i> 藍海特色賽道突破</h4>
+            <p>主攻小學整本書閱讀、幼兒情緒感統、特教個別化計劃（IEP）轉銜及職業技術課程協調，精準對接多元教育平衡政策。</p>
+          </div>
+          <div class="strategy-item">
+            <h4><i class="fa-solid fa-heart-pulse"></i> 教育家生命蛻變敘事</h4>
+            <p>以師德為魂，生動呈現如何化解學困生或邊緣學生心結、啟迪學生靈魂之鮮活案例，讓評審專家看見有溫度的育人情懷。</p>
+          </div>
+          <div class="strategy-item">
+            <h4><i class="fa-solid fa-users-viewfinder"></i> 制度化預答辯與專班</h4>
+            <p>校級文膽專班負責視覺與邏輯雕琢，多輪專家盲審與現場答辯演練，形成校園代代相傳的學術與榮譽共同體。</p>
+          </div>
+        </div>
+      </div>
+    </section>
 
     <!-- Charts Grid -->
     <div class="charts-grid">
