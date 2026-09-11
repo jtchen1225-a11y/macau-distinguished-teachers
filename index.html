@@ -5,7 +5,624 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>澳門非高等教育「卓越表現教師」歷屆獲獎大數據決策儀表板 (第1屆至第11屆全景權威庫)</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js">
+  // ============================================================
+  // PRESENTATION SLIDES & WHITEBOARD LOGIC
+  // ============================================================
+  const presSlides = [
+  {
+    "id": "step-1",
+    "category": "體制機制",
+    "badge": "第 1 支柱・專班機制",
+    "title": "體制改革：成立校級「申報專班」",
+    "subtitle": "副校長親自掛帥，教研主任主管學術，文宣主筆負責教育敘事與視覺打磨",
+    "icon": "fa-users-gear",
+    "color": "#2563eb",
+    "key_takeaway": "核心抓手：打破部門壁壘，變教師個人單打獨鬥為全校集體作戰",
+    "points": [
+      "<strong>痛點破解</strong>：過往許多優秀前線教師因平日教學繁重、不熟悉官方申報指標體系與文本規範，往往在材料初審或敘事提煉階段遺珠抱憾。",
+      "<strong>組長（副校長掛帥）</strong>：總攬全校戰略資源調配，拍板年度主申報方向，負責與校董會及行政會溝通，給予候選教師充份的減課與專案研發空間。",
+      "<strong>執行協調（教務/教研主任）</strong>：盤點該教師歷年教學節數、公開課示範、校本課程研發、獲獎論文及學生指導榮譽，形成無懈可擊的量化支撐鏈。",
+      "<strong>核心文膽（文宣主筆/語文名師）</strong>：專責材料文本架構雕琢，將枯燥課堂紀錄轉化為具備「教育家精神」的感人敘事，並把關雜誌級視覺排版。"
+    ],
+    "checklist": [
+      "每年 9 月召開校級專班成立會，確認年度重點申報候選人名單",
+      "建立「一人一檔」電子材料庫，分設：師德理念、課程創新、競賽帶教、學生蛻變四個子模組",
+      "教研處負責對接教青局最新政策指引，文宣處負責統一視覺範本與排版規格"
+    ]
+  },
+  {
+    "id": "step-2",
+    "category": "人才蓄水",
+    "badge": "第 2 支柱・梯隊蓄水",
+    "title": "梯隊建設：建立「3+3 名師儲備池」",
+    "subtitle": "3位成熟期近期衝刺 + 3位中青年種子蓄水池，提前 3 年週期化孵化",
+    "icon": "fa-seedling",
+    "color": "#16a34a",
+    "key_takeaway": "核心抓手：提早 3 年鎖定教齡 8–15 年之教學骨幹，確保材料具備足夠「時間厚度」",
+    "points": [
+      "<strong>蓄水池結構</strong>：建立常態化「3 位衝刺名師（教齡 12-20 年，成果已基本齊備）+ 3 位種子名師（教齡 6-12 年，爆發力強之潛力骨幹）」。",
+      "<strong>週期目標賦能</strong>：為每位種子名師制定「三年專項成長路徑」，每年保證賦予其負責 1 項校本特色新課程研發、帶領 1 支重點學科大賽隊伍。",
+      "<strong>避免臨急抱佛腳</strong>：卓越教師評審極其看重成果的「連續性」與「沉澱感」，3 年蓄水期可確保其發表論文、示範課、指導獲獎具有清晰的遞進邏輯。",
+      "<strong>師友傳幫帶機制</strong>：由校內歷屆已獲獎之卓越教師一對一定點指導種子教師，傳承申報答辯心法與教研積累經驗。"
+    ],
+    "checklist": [
+      "每學年結束時由行政會召開儲備池滾動評審，實施動態進出機制",
+      "為入池教師每年提供專項研習與境內外學術交流名額（如全國教學大賽、大灣區教研會）",
+      "設立種子教師專項教研基金，資助其出版校本教材、專題論文集或教具專利申報"
+    ]
+  },
+  {
+    "id": "step-3",
+    "category": "戰略定位",
+    "badge": "第 3 支柱・賽道突圍",
+    "title": "賽道突圍：主攻「小學、幼教、德育特色」",
+    "subtitle": "避開中學數理白熱化紅海，策略性進軍專屬政策保護名額與多元教育平衡賽道",
+    "icon": "fa-compass",
+    "color": "#d97706",
+    "key_takeaway": "核心抓手：發掘小幼職特全人優勢，精準契合特區政府多元教育均衡政策導向",
+    "points": [
+      "<strong>形勢研判</strong>：大數據顯示中學學段佔總獲獎人數近 70%，數理奧賽與高考神話已成高度內捲紅海，普通學校非國際金牌難以突破。",
+      "<strong>小學學段藍海（佔比 17.5%）</strong>：重點包裝「小學整本書閱讀跨學科教研」、「創思數學本土化實驗」、「資深班主任全人品格身教與家校共育網絡」。",
+      "<strong>幼兒學段藍海（佔比 6.4%）</strong>：深耕「蒙特梭利本土化實踐」、「幼兒感統遊戲化探索」、「傳統文化入園與情緒韌性啟蒙」，易在專家面試中展現動人師愛。",
+      "<strong>特教、職教與回歸教育</strong>：職業技術大健康照護（如中葡職中）、特殊教育個別化計劃（IEP）轉銜、成人夜間回歸教育（如商訓），政策支持度極高，極易獲得政府社會文化司及評審專家的特別肯定。"
+    ],
+    "checklist": [
+      "盤點校內小學部與幼稚園部的隱形名師，主動挖掘班級經營與愛生感人實例",
+      "協助小幼教師將零散的課堂心得提煉為具備理論支撐的「校本教學法」（如情境體驗教學法）",
+      "在跨學段申報時給予小學、幼教教師與中學名師完全同等的評審推薦資源與專班支持"
+    ]
+  },
+  {
+    "id": "step-4",
+    "category": "顯性指標",
+    "badge": "第 4 支柱・硬通貨成果",
+    "title": "前置成果：全面攻堅《教學設計獎勵計劃》",
+    "subtitle": "教青局獎項為參選第一硬通貨，同步鎖定國際奧賽、國家級教學成果獎標誌性突破",
+    "icon": "fa-award",
+    "color": "#9333ea",
+    "key_takeaway": "核心抓手：以教青局《教學設計獎勵計劃》優異獎為敲門磚，築牢客觀公信力",
+    "points": [
+      "<strong>硬通貨法則</strong>：歷屆大數據深度審核顯示，超過 80% 獲獎教師在申報前曾榮獲澳門教青局《教學設計獎勵計劃》優異獎、一等獎或教學教案設計大獎。",
+      "<strong>提前 2 年立項攻堅</strong>：學校行政會應將《教學設計獎勵計劃》視為卓越教師的「預備期必修考驗」，指派特約教研顧問指導教案打磨與課堂錄影。",
+      "<strong>國際與全國競賽硬核指標</strong>：數理科組借鑑培正、濠江經驗，鎖定國際奧賽（IMO/ISEF/IOI/iGEM）、全國青少年科創大賽奪牌；體藝科組攻堅學界錦標賽總冠軍與全國合唱/舞蹈最高獎。",
+      "<strong>國家級教學成果獎示範效應</strong>：廣大中學黃斯婷老師以《初中設計應用課程體系》勇奪國家級教學成果獎二等獎，樹立了「課堂實踐—成果凝練—國家級獲獎」的典範路徑。"
+    ],
+    "checklist": [
+      "將《教學設計獎勵計劃》獲獎列為校級申報卓越教師的優先推薦門檻",
+      "設立「重點競賽與教研專案攻堅庫」，匹配充足之教具採購與集訓實驗室資源",
+      "指導教師將日常教學實踐及時申報為教青局公開課、教研論文與教具發明專利"
+    ]
+  },
+  {
+    "id": "step-5",
+    "category": "申報材料",
+    "badge": "第 5 支柱・文本精造",
+    "title": "文本精造：嚴守 30 頁紅線與生命敘事",
+    "subtitle": "雜誌級高標視覺排版與數據論證，核心聚焦「格言＋獨創教法＋學生生命蛻變」",
+    "icon": "fa-file-signature",
+    "color": "#0891b2",
+    "key_takeaway": "核心抓手：文宣主筆深度介入，杜絕枯燥排課清單，凝練動人心弦的教育家精神",
+    "points": [
+      "<strong>嚴守 30 頁審批紅線</strong>：評審委員每年審閱大量材料，超出規定頁數或排版雜亂的材料極易引起審閱疲勞。必須進行字斟句酌的精確刪減。",
+      "<strong>雜誌級排版與數據論證</strong>：採用現代化圖文版式，高清實錄課堂照片、學生作品、榮譽獎狀掃描件、教育成效量化圖表（如及格率、滿意度、競賽梯隊數據）。",
+      "<strong>靈魂三問核心框架</strong>：",
+      "  1. <strong>教育格言與育人哲學</strong>：教師終身奉行的育人信念（如彭超「天地立心」、劉貳和「為藝術戰」、梁沛津「理論探索與想像力」）；",
+      "  2. <strong>突破性痛點解決</strong>：針對常規課堂頑疾、偏科生或學困生，教師創立了何種獨步澳門的校本教學法或教學工具？",
+      "  3. <strong>學生生命蛻變故事</strong>：具體詳述 1 至 2 位被該教師徹底改變人生命運的典型學生案例，展現潤物無聲的崇高師德。"
+    ],
+    "checklist": [
+      "申報材料文本交由專業設計人員與文宣主筆統一進行排版美化與校對",
+      "文本嚴格按「前言格言—專業成長—教學創新—育人故事—榮譽清單」五段式黃金結構呈現",
+      "附錄二維碼連結，提供高畫質微課教學視頻或學生活動實錄剪輯"
+    ]
+  },
+  {
+    "id": "step-6",
+    "category": "專家評審",
+    "badge": "第 6 支柱・全真答辯",
+    "title": "答辯演練：1月開展 2-3 輪全真專家面試",
+    "subtitle": "力邀校外資深教育評委與校內卓越名師，實施高強度模擬面試與材料壓力測試",
+    "icon": "fa-microphone-lines",
+    "color": "#dc2626",
+    "key_takeaway": "核心抓手：全真閉門高壓模擬，打磨演講氣場、應答邏輯與突發問題處變能力",
+    "points": [
+      "<strong>時間節點</strong>：於正式遞交申報材料前夕（每年 1 月），由副校長親自主持組織模擬面試專班。",
+      "<strong>模擬專家組陣容</strong>：邀請退休學校督導、澳門大學/高校教育學院學者、校內歷屆已獲卓越榮譽之名師，模擬真實評審委員會視角。",
+      "<strong>5 分鐘自述亮點提煉</strong>：反覆訓練候選教師在 300 秒內以極具感染力的語言，精準輸出個人教育格言、最亮眼之教研專利/教改突破及育人生命故事。",
+      "<strong>突發質詢與壓力測試</strong>：針對材料中的邊界問題、學科前沿爭議、與其他申報者相比之核心競爭力進行多角度追問，確保教師現場答辯自信自如、條理清晰。"
+    ],
+    "checklist": [
+      "安排專業攝影全程錄像，答辯後逐分鐘復盤教師的儀態、語速、眼神交流與關鍵詞表達",
+      "針對專家質詢提出的漏洞，在正式送審前對書面材料及佐證附件進行最後一輪修訂補充",
+      "為候選教師進行心理疏導與減壓，賦予行政會全體委員之堅定信任與祝福"
+    ]
+  },
+  {
+    "id": "principle-1",
+    "category": "戰略法則",
+    "badge": "決策指引 ①",
+    "title": "提早 3 年建立「卓越種子人才庫」與蓄水池機制",
+    "subtitle": "破除臨急拼湊弊病，鎖定教齡 8–15 年之教學骨幹，以 3 年為週期定製系統化成果鏈條",
+    "icon": "fa-clock",
+    "color": "#0d9488",
+    "key_takeaway": "核心法則：榮譽是長年深耕的自然水到渠成，而非短期填表湊數",
+    "points": [
+      "<strong>精準識別人才</strong>：行政會與人事處重點考察教齡在 8 至 15 年間、課堂教學深受歷屆學生愛戴、同儕評價極高的青壯年名師。",
+      "<strong>三年任務清單</strong>：T-3 年立項校本特色課改；T-2 年攻堅教青局《教學設計獎勵計劃》或學界大賽；T-1 年開展公開課交流與教學著述出版。",
+      "<strong>制度性蓄水</strong>：各科組每年至少儲備 1 名種子教師，形成「老帶新、熟帶青」可持續發展的榮譽傳承梯隊。"
+    ],
+    "checklist": [
+      "建立校級種子教師檔案庫，每年底由教務處審查其教研進展",
+      "給予種子教師跨校交流與大灣區名校同台賽課之優先權",
+      "在校級評優中給予種子教師教研專項獎勵"
+    ]
+  },
+  {
+    "id": "principle-2",
+    "category": "戰略法則",
+    "badge": "決策指引 ②",
+    "title": "鎖定顯性標誌性成果（國際/全國競賽金牌與成果獎）",
+    "subtitle": "以客觀無可爭議的硬指標征服專家組，借鑑培正、濠江、鏡平之頂尖孵化路徑",
+    "icon": "fa-medal",
+    "color": "#eab308",
+    "key_takeaway": "核心法則：標誌性成果是評審專家最難以忽視、最具客觀公信力的敲門磚",
+    "points": [
+      "<strong>頂級競賽突圍</strong>：指導學生在國際奧林匹克競賽（IMO/ISEF/IOI/iGEM）、全國青少年科創大賽取得金牌突破，具備震撼性的學界影響力。",
+      "<strong>國家級成果獎突破</strong>：積極將課堂實踐與課程體系開發申報為國家級或特區級教學成果獎，賦予教師國家級學術背書。",
+      "<strong>體育藝術大賽金獎</strong>：在學界排球、田徑、籃球、全國合唱節、學界舞蹈大賽奪冠，是五育並舉不可或缺的重磅指標。"
+    ],
+    "checklist": [
+      "為重點競賽梯隊設立專項教練津貼與實驗器材採購預算",
+      "邀請海內外競賽金牌教練入校進行專題指導與賽題培訓",
+      "對取得國際/全國標誌性突破的指導教師進行全校表彰並納入申報頭部候選人"
+    ]
+  },
+  {
+    "id": "principle-3",
+    "category": "戰略法則",
+    "badge": "決策指引 ③",
+    "title": "避開數理紅海，策略性進軍「小學、特教、職教、全人」藍海",
+    "subtitle": "精準對接特區政府多元教育均衡政策，發掘非高等教育體系中的差異化競爭優勢",
+    "icon": "fa-water",
+    "color": "#0284c7",
+    "key_takeaway": "核心法則：在政策高度支持但申報者較少的冷門賽道，往往具有最高獲獎勝率",
+    "points": [
+      "<strong>賽道差異化</strong>：中學數理已成各大名校頂級選手廝殺的紅海，普通學校很難單純依靠常規教學脫穎而出。",
+      "<strong>小學語文與整本書閱讀</strong>：展現小學低中年級語文奠基、中華文化經典誦讀與學生文學素養培育。",
+      "<strong>幼兒全人發展</strong>：蒙特梭利、感統發展、情緒自我調節及生活常規培養，極能體現幼師無微不至的奉獻精神。",
+      "<strong>融合教育與健康職教</strong>：特教 IEP 個別化教育方案、職教校企合作課程協調員，切中澳門「1+4」適度多元與弱勢群體關懷核心。"
+    ],
+    "checklist": [
+      "主動在小學部與幼稚園設立專案教研組，為申報儲備素材",
+      "鼓勵融合教育資源教師將成功個案總結為轉銜支持論文與案例集",
+      "在職教領域強化與本澳醫療機構、企業聯動之產學協同成果"
+    ]
+  },
+  {
+    "id": "principle-4",
+    "category": "戰略法則",
+    "badge": "決策指引 ④",
+    "title": "凝練「教育家精神」與生命蛻變敘事",
+    "subtitle": "拒絕平庸流水帳，以師德為魂，生動展現教師點亮心靈、徹底扭轉學生人生的感人案例",
+    "icon": "fa-heart-pulse",
+    "color": "#ec4899",
+    "key_takeaway": "核心法則：數據證明能力，故事打動人心；兩者兼備方顯卓越大師風骨",
+    "points": [
+      "<strong>教育家精神</strong>：評審專家極度反感只是羅列兼任職務、課堂節數的功利性申報材料，極為渴望看到教師對教育本質的終身追求與熱誠。",
+      "<strong>提煉標誌性教育格言</strong>：一句朗朗上口且貫穿始終的信念（如「做有溫度的引路人」、「為天地立心」、「默默耕種，靜待花開」）。",
+      "<strong>生動的生命蛻變案例</strong>：詳細記錄面對迷茫、叛逆、家庭變故或學業嚴重受挫之學生，教師如何以數年如一日的耐心與智慧，將其引導至自信陽光的人生正途。"
+    ],
+    "checklist": [
+      "專班文膽深入採訪教師本人及其畢業生，挖掘最動人的真實故事素材",
+      "在申報材料中保留 1-2 封畢業生或家長的真情致謝信件原件影本",
+      "確保敘事細節豐富具體（如時間、對話、轉折心理），杜絕空洞說教"
+    ]
+  },
+  {
+    "id": "principle-5",
+    "category": "戰略法則",
+    "badge": "決策指引 ⑤",
+    "title": "設立校級申報專班與制度化預評審",
+    "subtitle": "校級文膽深度介入視覺雕琢，多輪專家閉門壓力測試，打造學校榮譽共同體",
+    "icon": "fa-users-viewfinder",
+    "color": "#8b5cf6",
+    "key_takeaway": "核心法則：卓越教師是一所學校綜合教研實力與行政動員水準的最高體現",
+    "points": [
+      "<strong>全校協同護航</strong>：卓越教師申報不僅是教師個人的事，更是全校展現辦學特色與師資美譽的重大校政行動。",
+      "<strong>文宣與教研雙輪驅動</strong>：教研處確保學術數據精準權威，文宣組負責高格調視覺設計，使材料在數十份候選檔案中第一眼脫穎而出。",
+      "<strong>嚴格的校內同行評議</strong>：正式上報前由校領導班子進行閉門初審與逐頁審定，嚴控質量標準，捍衛學校學術聲譽。"
+    ],
+    "checklist": [
+      "每學年將卓越教師申報列為學校行政會重大決策督辦事項",
+      "制定校本申報材料內部審核進度甘特圖（9月啟動、11月初稿、12月精修、1月模擬面試）",
+      "對為申報專班付出辛勤勞動的教研與文宣骨幹給予相應工作量折算與獎勵"
+    ]
+  }
+];
+  let currentSlideIdx = 0;
+  let currentTool = 'select'; // 'select', 'pen', 'highlighter', 'eraser'
+  let currentColor = '#ef4444';
+  let currentPenSize = 4;
+  let isDrawing = false;
+  let lastX = 0;
+  let lastY = 0;
+
+  // History per slide for undo
+  const slideDrawings = {}; // slideIdx -> array of ImageData or canvas snapshots
+  const slideUndoStack = {}; // slideIdx -> stack of canvas states
+
+  // Toggle Roadmap Section Collapsed / Expanded
+  function toggleRoadmap(expandOnly = false) {
+    const wrapper = document.getElementById('roadmapCollapseWrapper');
+    const banner = document.getElementById('roadmapCollapsedBanner');
+    const sec = document.getElementById('roadmapSection');
+    
+    if (expandOnly) {
+      wrapper.classList.remove('collapsed');
+      banner.style.display = 'none';
+      sec.style.display = 'block';
+      localStorage.setItem('roadmap_collapsed', 'false');
+    } else {
+      const isCurrentlyCollapsed = wrapper.classList.contains('collapsed');
+      if (isCurrentlyCollapsed) {
+        wrapper.classList.remove('collapsed');
+        banner.style.display = 'none';
+        sec.style.display = 'block';
+        localStorage.setItem('roadmap_collapsed', 'false');
+      } else {
+        wrapper.classList.add('collapsed');
+        banner.style.display = 'flex';
+        sec.style.display = 'none';
+        localStorage.setItem('roadmap_collapsed', 'true');
+      }
+    }
+  }
+
+  // Initialize collapse state from localStorage
+  if (localStorage.getItem('roadmap_collapsed') === 'true') {
+    toggleRoadmap(false);
+  }
+
+  // Presentation Modal Opening
+  function openPresentationById(slideId) {
+    const idx = presSlides.findIndex(s => s.id === slideId);
+    if (idx !== -1) {
+      openPresentationByIndex(idx);
+    } else {
+      openPresentationByIndex(0);
+    }
+  }
+
+  function openPresentationByIndex(idx) {
+    currentSlideIdx = Math.max(0, Math.min(idx, presSlides.length - 1));
+    const modal = document.getElementById('presentationModal');
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+
+    // Render Slide Content
+    renderSlideContent(currentSlideIdx);
+
+    // Initialize Canvas Size
+    setTimeout(() => {
+      initCanvasSize();
+      restoreCanvasState();
+    }, 60);
+
+    // Add keyboard listener
+    window.addEventListener('keydown', handlePresKeydown);
+  }
+
+  function closePresentation() {
+    const modal = document.getElementById('presentationModal');
+    modal.style.display = 'none';
+    document.body.style.overflow = '';
+    window.removeEventListener('keydown', handlePresKeydown);
+    
+    // If browser in fullscreen, exit
+    if (document.fullscreenElement) {
+      document.exitFullscreen().catch(() => {});
+    }
+  }
+
+  function closePresentationIfOutside(e) {
+    if (e.target.classList.contains('pres-backdrop')) {
+      closePresentation();
+    }
+  }
+
+  function handlePresKeydown(e) {
+    if (e.key === 'Escape') {
+      closePresentation();
+    } else if (e.key === 'ArrowRight' || e.key === 'PageDown') {
+      nextSlide();
+    } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+      prevSlide();
+    }
+  }
+
+  function prevSlide() {
+    if (currentSlideIdx > 0) {
+      saveCanvasState();
+      currentSlideIdx--;
+      renderSlideContent(currentSlideIdx);
+      setTimeout(() => {
+        initCanvasSize();
+        restoreCanvasState();
+      }, 30);
+    }
+  }
+
+  function nextSlide() {
+    if (currentSlideIdx < presSlides.length - 1) {
+      saveCanvasState();
+      currentSlideIdx++;
+      renderSlideContent(currentSlideIdx);
+      setTimeout(() => {
+        initCanvasSize();
+        restoreCanvasState();
+      }, 30);
+    }
+  }
+
+  function renderSlideContent(idx) {
+    const s = presSlides[idx];
+    document.getElementById('presCategoryBadge').innerText = s.badge;
+    document.getElementById('presSlideCounter').innerText = `${idx + 1} / ${presSlides.length}`;
+
+    const area = document.getElementById('slideContentArea');
+    
+    let pointsHtml = s.points.map(p => `
+      <div class="slide-point-card">${p}</div>
+    `).join('');
+
+    let checklistHtml = '';
+    if (s.checklist && s.checklist.length > 0) {
+      checklistHtml = `
+        <div class="slide-checklist-box">
+          <div class="slide-checklist-title">
+            <i class="fa-solid fa-list-check"></i> 行政會落實行動檢核表 (Actionable Deliverables)
+          </div>
+          ${s.checklist.map(item => `
+            <div class="slide-checklist-item">
+              <i class="fa-solid fa-circle-check"></i>
+              <div>${item}</div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    area.innerHTML = `
+      <div class="slide-step-badge" style="background:${s.color}15; color:${s.color};">
+        <i class="fa-solid ${s.icon}"></i> ${s.category}
+      </div>
+      <h2 class="slide-title">${s.title}</h2>
+      <div class="slide-subtitle">${s.subtitle}</div>
+
+      <div class="slide-callout-box" style="border-left-color:${s.color};">
+        <i class="fa-solid fa-bullseye" style="font-size:1.3rem;"></i>
+        <div>${s.key_takeaway}</div>
+      </div>
+
+      <div class="slide-points-grid">
+        ${pointsHtml}
+      </div>
+
+      ${checklistHtml}
+    `;
+
+    // Scroll to top
+    area.scrollTop = 0;
+  }
+
+  // ============================================================
+  // CANVAS DRAWING & ANNOTATION ENGINE (高精度白板批註系統)
+  // ============================================================
+  const canvas = document.getElementById('annotationCanvas');
+  const ctx = canvas ? canvas.getContext('2d') : null;
+
+  function initCanvasSize() {
+    const viewport = document.getElementById('presViewport');
+    if (!viewport || !canvas) return;
+
+    const rect = viewport.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+
+    // Save existing image before resize if already initialized
+    let tempImg = null;
+    if (canvas.width > 0 && canvas.height > 0) {
+      tempImg = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    }
+
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    canvas.style.width = rect.width + 'px';
+    canvas.style.height = rect.height + 'px';
+
+    ctx.scale(dpr, dpr);
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+
+    if (tempImg) {
+      ctx.putImageData(tempImg, 0, 0);
+    }
+  }
+
+  window.addEventListener('resize', () => {
+    if (document.getElementById('presentationModal').style.display === 'flex') {
+      initCanvasSize();
+    }
+  });
+
+  function setTool(tool) {
+    currentTool = tool;
+    
+    // Update toolbar buttons
+    document.getElementById('btnToolSelect').classList.toggle('active', tool === 'select');
+    document.getElementById('btnToolPen').classList.toggle('active', tool === 'pen');
+    document.getElementById('btnToolHighlighter').classList.toggle('active', tool === 'highlighter');
+    document.getElementById('btnToolEraser').classList.toggle('active', tool === 'eraser');
+
+    // Update canvas interaction mode
+    canvas.classList.remove('active-pen', 'active-eraser');
+    if (tool === 'pen' || tool === 'highlighter') {
+      canvas.classList.add('active-pen');
+    } else if (tool === 'eraser') {
+      canvas.classList.add('active-eraser');
+    }
+  }
+
+  function setColor(colorHex, dotEl) {
+    currentColor = colorHex;
+    document.querySelectorAll('.color-dot').forEach(d => d.classList.remove('active'));
+    if (dotEl) dotEl.classList.add('active');
+
+    // Automatically switch to pen if select or eraser was active
+    if (currentTool === 'select' || currentTool === 'eraser') {
+      setTool('pen');
+    }
+  }
+
+  function setPenSize(sz) {
+    currentPenSize = parseInt(sz) || 4;
+  }
+
+  function getCanvasCoords(e) {
+    const rect = canvas.getBoundingClientRect();
+    return {
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top
+    };
+  }
+
+  // Pointer Events for Stylus / Mouse / Touch
+  canvas.addEventListener('pointerdown', (e) => {
+    if (currentTool === 'select') return;
+    isDrawing = true;
+    const pos = getCanvasCoords(e);
+    lastX = pos.x;
+    lastY = pos.y;
+    canvas.setPointerCapture(e.pointerId);
+
+    // Save state for undo before starting this stroke
+    pushUndoState();
+
+    // Draw single point for dotting
+    drawStroke(pos.x, pos.y);
+  });
+
+  canvas.addEventListener('pointermove', (e) => {
+    if (!isDrawing || currentTool === 'select') return;
+    const pos = getCanvasCoords(e);
+    drawStroke(pos.x, pos.y);
+    lastX = pos.x;
+    lastY = pos.y;
+  });
+
+  canvas.addEventListener('pointerup', (e) => {
+    if (!isDrawing) return;
+    isDrawing = false;
+    canvas.releasePointerCapture(e.pointerId);
+  });
+
+  canvas.addEventListener('pointercancel', () => {
+    isDrawing = false;
+  });
+
+  function drawStroke(x, y) {
+    ctx.beginPath();
+    ctx.moveTo(lastX, lastY);
+    ctx.lineTo(x, y);
+
+    if (currentTool === 'eraser') {
+      ctx.globalCompositeOperation = 'destination-out';
+      ctx.lineWidth = currentPenSize * 4;
+      ctx.strokeStyle = 'rgba(0,0,0,1)';
+    } else if (currentTool === 'highlighter') {
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.lineWidth = currentPenSize * 4;
+      // Semi-transparent color
+      ctx.strokeStyle = currentColor + '55'; // 33% opacity hex
+    } else {
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.lineWidth = currentPenSize;
+      ctx.strokeStyle = currentColor;
+    }
+
+    ctx.stroke();
+    ctx.closePath();
+  }
+
+  function pushUndoState() {
+    if (!slideUndoStack[currentSlideIdx]) {
+      slideUndoStack[currentSlideIdx] = [];
+    }
+    // Store snapshot dataURL or ImageData
+    slideUndoStack[currentSlideIdx].push(canvas.toDataURL());
+    if (slideUndoStack[currentSlideIdx].length > 15) {
+      slideUndoStack[currentSlideIdx].shift();
+    }
+  }
+
+  function undoCanvas() {
+    if (!slideUndoStack[currentSlideIdx] || slideUndoStack[currentSlideIdx].length === 0) {
+      clearCanvas();
+      return;
+    }
+    const prevDataUrl = slideUndoStack[currentSlideIdx].pop();
+    const img = new Image();
+    img.onload = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const rect = canvas.getBoundingClientRect();
+      ctx.drawImage(img, 0, 0, rect.width, rect.height);
+    };
+    img.src = prevDataUrl;
+  }
+
+  function clearCanvas() {
+    if (!ctx) return;
+    pushUndoState();
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
+
+  function saveCanvasState() {
+    if (!canvas) return;
+    slideDrawings[currentSlideIdx] = canvas.toDataURL();
+  }
+
+  function restoreCanvasState() {
+    if (!ctx || !canvas) return;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    if (slideDrawings[currentSlideIdx]) {
+      const img = new Image();
+      img.onload = () => {
+        const rect = canvas.getBoundingClientRect();
+        ctx.drawImage(img, 0, 0, rect.width, rect.height);
+      };
+      img.src = slideDrawings[currentSlideIdx];
+    }
+  }
+
+  function toggleBrowserFullscreen() {
+    const container = document.getElementById('presContainer');
+    const icon = document.getElementById('fsIcon');
+    if (!document.fullscreenElement) {
+      container.requestFullscreen().then(() => {
+        icon.classList.remove('fa-expand');
+        icon.classList.add('fa-compress');
+        setTimeout(initCanvasSize, 100);
+      }).catch(() => {});
+    } else {
+      document.exitFullscreen().then(() => {
+        icon.classList.remove('fa-compress');
+        icon.classList.add('fa-expand');
+        setTimeout(initCanvasSize, 100);
+      }).catch(() => {});
+    }
+  }
+
+  </script>
   <style>
     :root {
       --primary: #1e3a8a;
@@ -522,6 +1139,417 @@
       font-size: 0.85rem;
       color: var(--text-muted);
     }
+  
+    /* Collapsible Roadmap Styling */
+    .collapsible-header-btn {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      color: #1e3a8a;
+      padding: 7px 16px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+    .collapsible-header-btn:hover {
+      background: #dbeafe;
+      color: #172554;
+      border-color: #93c5fd;
+    }
+    .roadmap-collapse-wrapper {
+      transition: max-height 0.4s ease, opacity 0.3s ease;
+      overflow: hidden;
+    }
+    .roadmap-collapse-wrapper.collapsed {
+      max-height: 0 !important;
+      opacity: 0;
+      margin: 0;
+      padding: 0;
+      pointer-events: none;
+    }
+    .roadmap-collapsed-banner {
+      background: linear-gradient(135deg, #f0fdf4 0%, #e0f2fe 100%);
+      border: 1px solid #bfdbfe;
+      border-radius: 12px;
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .roadmap-collapsed-banner:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(30,58,138,0.08);
+    }
+    .banner-title {
+      font-weight: 800;
+      color: #1e3a8a;
+      font-size: 1.02rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .banner-desc {
+      font-size: 0.84rem;
+      color: #64748b;
+      margin-left: 32px;
+    }
+
+    /* Magnify / Fullscreen Button on Cards */
+    .btn-card-expand {
+      background: rgba(30,58,138,0.07);
+      border: 1px solid rgba(30,58,138,0.15);
+      color: #1e3a8a;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.76rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.2s;
+    }
+    .btn-card-expand:hover {
+      background: #1e3a8a;
+      color: #ffffff;
+      border-color: #1e3a8a;
+      transform: scale(1.03);
+    }
+    .step-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    /* ============================================================
+       PRESENTATION MODAL & CANVAS STYLES
+       ============================================================ */
+    .pres-modal {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      z-index: 99999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .pres-backdrop {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(8px);
+    }
+    .pres-container {
+      position: relative;
+      width: 95vw;
+      max-width: 1400px;
+      height: 92vh;
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+    .pres-top-bar {
+      background: #0f172a;
+      color: white;
+      padding: 12px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid #334155;
+      flex-shrink: 0;
+    }
+    .pres-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .pres-badge {
+      background: #1e3a8a;
+      color: #93c5fd;
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      border: 1px solid #2563eb;
+    }
+    .pres-counter {
+      color: #94a3b8;
+      font-size: 0.88rem;
+      font-weight: 600;
+      font-family: monospace;
+    }
+
+    /* Whiteboard Toolbar */
+    .wb-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: #1e293b;
+      padding: 4px 10px;
+      border-radius: 8px;
+      border: 1px solid #334155;
+    }
+    .wb-btn {
+      background: transparent;
+      border: none;
+      color: #cbd5e1;
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      transition: all 0.15s;
+    }
+    .wb-btn:hover {
+      background: #334155;
+      color: #ffffff;
+    }
+    .wb-btn.active {
+      background: #2563eb;
+      color: #ffffff;
+      box-shadow: 0 0 8px rgba(37,99,235,0.5);
+    }
+    .wb-btn.danger:hover {
+      background: #dc2626;
+      color: #ffffff;
+    }
+    .wb-divider {
+      width: 1px;
+      height: 20px;
+      background: #475569;
+      margin: 0 4px;
+    }
+    .wb-colors {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .color-dot {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: transform 0.15s;
+    }
+    .color-dot:hover {
+      transform: scale(1.2);
+    }
+    .color-dot.active {
+      outline: 2px solid #38bdf8;
+      outline-offset: 2px;
+    }
+    .wb-select {
+      background: #0f172a;
+      color: #f1f5f9;
+      border: 1px solid #475569;
+      border-radius: 6px;
+      padding: 4px 8px;
+      font-size: 0.78rem;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .pres-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .pres-btn-icon {
+      background: #1e293b;
+      border: 1px solid #334155;
+      color: #cbd5e1;
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.95rem;
+      transition: all 0.2s;
+    }
+    .pres-btn-icon:hover {
+      background: #334155;
+      color: #ffffff;
+    }
+    .pres-btn-icon.close:hover {
+      background: #dc2626;
+      border-color: #dc2626;
+      color: white;
+    }
+
+    /* Viewport Area */
+    .pres-viewport {
+      position: relative;
+      flex: 1;
+      overflow: hidden;
+      display: flex;
+      background: #f8fafc;
+    }
+    .pres-canvas {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 20;
+      cursor: default;
+      pointer-events: none; /* controlled by JS depending on tool */
+    }
+    .pres-canvas.active-pen {
+      pointer-events: auto;
+      cursor: crosshair;
+    }
+    .pres-canvas.active-eraser {
+      pointer-events: auto;
+      cursor: cell;
+    }
+
+    .slide-content-area {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      height: 100%;
+      overflow-y: auto;
+      padding: 36px 48px;
+      box-sizing: border-box;
+    }
+
+    /* Slide Typography */
+    .slide-step-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 14px;
+      background: #e0f2fe;
+      color: #0369a1;
+      font-weight: 800;
+      font-size: 0.9rem;
+      border-radius: 8px;
+      margin-bottom: 12px;
+    }
+    .slide-title {
+      font-size: 2.1rem;
+      font-weight: 850;
+      color: #0f172a;
+      line-height: 1.25;
+      margin-bottom: 10px;
+    }
+    .slide-subtitle {
+      font-size: 1.15rem;
+      color: #475569;
+      margin-bottom: 24px;
+      line-height: 1.5;
+    }
+    .slide-callout-box {
+      background: linear-gradient(135deg, #f0fdf4 0%, #e0f2fe 100%);
+      border-left: 5px solid #16a34a;
+      border-radius: 0 10px 10px 0;
+      padding: 16px 20px;
+      font-size: 1.02rem;
+      font-weight: 700;
+      color: #166534;
+      margin-bottom: 28px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .slide-points-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+      gap: 20px;
+      margin-bottom: 28px;
+    }
+    .slide-point-card {
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 18px 20px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+      line-height: 1.6;
+      font-size: 0.96rem;
+      color: #334155;
+    }
+    .slide-checklist-box {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      padding: 20px 24px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+    }
+    .slide-checklist-title {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: #1e3a8a;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .slide-checklist-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 10px;
+      font-size: 0.92rem;
+      color: #1e293b;
+    }
+    .slide-checklist-item i {
+      color: #16a34a;
+      margin-top: 3px;
+    }
+
+    /* Bottom Nav Bar */
+    .pres-bottom-bar {
+      background: #ffffff;
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid #e2e8f0;
+      flex-shrink: 0;
+    }
+    .pres-nav-btn {
+      background: #1e3a8a;
+      color: white;
+      border: none;
+      padding: 9px 18px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.15s;
+    }
+    .pres-nav-btn:hover {
+      background: #172554;
+      transform: translateY(-1px);
+    }
+    .pres-hint {
+      font-size: 0.82rem;
+      color: #64748b;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
   </style>
 </head>
 <body>
@@ -569,137 +1597,197 @@
     <!-- ============================================================
          EXECUTIVE ACTION ROADMAP MODULE (學校行政會——卓越教師孵化推進行動路線圖)
          ============================================================ -->
-    <section class="roadmap-section">
+    
+    <!-- Collapsed Quick Banner (Visible when collapsed) -->
+    <div id="roadmapCollapsedBanner" class="roadmap-collapsed-banner" style="display: none;" onclick="toggleRoadmap(true)">
+      <div>
+        <div class="banner-title"><i class="fa-solid fa-sitemap"></i> 學校行政會——卓越教師孵化推進行動路線圖與核心決策指引（已收合）</div>
+        <div class="banner-desc">包含 6 大實操推進行動支柱（專班、3+3蓄水池、賽道突圍、成果攻堅、文本精造、全真答辯）與 5 大行政落地法則</div>
+      </div>
+      <button class="collapsible-header-btn"><i class="fa-solid fa-chevron-down"></i> 展開詳細路線圖</button>
+    </div>
+
+    <!-- ============================================================
+         EXECUTIVE ACTION ROADMAP MODULE (學校行政會——卓越教師孵化推進行動路線圖)
+         ============================================================ -->
+    <section class="roadmap-section" id="roadmapSection">
       <div class="roadmap-section-header">
         <div class="roadmap-header-left">
           <h2><i class="fa-solid fa-sitemap"></i> 學校行政會——卓越教師孵化推進行動路線圖</h2>
           <p>整合校政決策、人才梯隊蓄水、特色賽道佈局、成果攻堅與答辯評審的閉環推展體系</p>
         </div>
-        <span class="roadmap-badge"><i class="fa-solid fa-lightbulb"></i> 行政會專用行動方案</span>
-      </div>
-
-      <!-- 6 Pillars Timeline Grid -->
-      <div class="roadmap-grid">
-        <!-- 1. 體制改革 -->
-        <div class="roadmap-step-card">
-          <div class="step-top">
-            <span class="step-num">1</span>
-            <span class="step-category">體制機制</span>
-          </div>
-          <div class="step-title"><i class="fa-solid fa-users-gear" style="color:#2563eb;"></i> 體制改革：成立校級「申報專班」</div>
-          <div class="step-desc">
-            改變教師單打獨鬥窘境。由<strong>副校長親自掛帥</strong>，教研主任主管學術成果凝練與科組資源調配，文宣主筆負責教育敘事與視覺打磨，實現全校合力護航。
-          </div>
-          <div class="step-action-tag">
-            <i class="fa-solid fa-circle-check"></i> 核心抓手：打破部門壁壘，設立榮譽申報專項行政協調機制
-          </div>
-        </div>
-
-        <!-- 2. 梯隊建設 -->
-        <div class="roadmap-step-card">
-          <div class="step-top">
-            <span class="step-num">2</span>
-            <span class="step-category">人才蓄水</span>
-          </div>
-          <div class="step-title"><i class="fa-solid fa-seedling" style="color:#16a34a;"></i> 梯隊建設：建立「3+3 名師儲備池」</div>
-          <div class="step-desc">
-            建立<strong>「3位近期衝刺 + 3位中青年種子」</strong>蓄水池機制。破除臨急湊材料弊病，提早 3 年鎖定教齡 8–15 年、深具教學熱誠與口碑的骨幹，賦予重點專案負責人職權。
-          </div>
-          <div class="step-action-tag">
-            <i class="fa-solid fa-circle-check"></i> 核心抓手：提前 3 年納入培育計劃，滾動更新候選人資料包
-          </div>
-        </div>
-
-        <!-- 3. 賽道突圍 -->
-        <div class="roadmap-step-card">
-          <div class="step-top">
-            <span class="step-num">3</span>
-            <span class="step-category">戰略定位</span>
-          </div>
-          <div class="step-title"><i class="fa-solid fa-compass" style="color:#d97706;"></i> 賽道突圍：主攻「小學、幼教、德育特色」</div>
-          <div class="step-desc">
-            中學數理競賽已成白熱化紅海。主動策劃進軍<strong>小學全科班主任、幼兒感統蒙氏、特殊教育融合、職教大健康及品德公民特色</strong>等政策傾斜之專屬保護名額。
-          </div>
-          <div class="step-action-tag">
-            <i class="fa-solid fa-circle-check"></i> 核心抓手：發掘小幼職特優勢，避開紅海尋求差異化突圍
-          </div>
-        </div>
-
-        <!-- 4. 前置成果 -->
-        <div class="roadmap-step-card">
-          <div class="step-top">
-            <span class="step-num">4</span>
-            <span class="step-category">顯性指標</span>
-          </div>
-          <div class="step-title"><i class="fa-solid fa-award" style="color:#9333ea;"></i> 前置成果：全面攻堅《教學設計獎勵計劃》</div>
-          <div class="step-desc">
-            教青局《教學設計獎勵計劃》獲獎為參選<strong>第一硬通貨</strong>。同步借鑑培正、濠江經驗，鎖定國際奧賽（IMO/ISEF/IOI/iGEM）、全國科技發明或國家教學成果獎。
-          </div>
-          <div class="step-action-tag">
-            <i class="fa-solid fa-circle-check"></i> 核心抓手：提前 2 年立項攻堅教研成果獎與各類標誌性賽事
-          </div>
-        </div>
-
-        <!-- 5. 文本精造 -->
-        <div class="roadmap-step-card">
-          <div class="step-top">
-            <span class="step-num">5</span>
-            <span class="step-category">申報材料</span>
-          </div>
-          <div class="step-title"><i class="fa-solid fa-file-signature" style="color:#0891b2;"></i> 文本精造：嚴守 30 頁紅線與生命敘事</div>
-          <div class="step-desc">
-            嚴守 30 頁審批上限，告別平庸流水帳。進行雜誌級視覺排版與數據論證，核心架構聚焦<strong>「教育格言＋痛點獨創破解法＋1至2位被徹底改變人生命運的典型學生故事」</strong>。
-          </div>
-          <div class="step-action-tag">
-            <i class="fa-solid fa-circle-check"></i> 核心抓手：文宣主筆深度介入，凝練教育家精神與師德光芒
-          </div>
-        </div>
-
-        <!-- 6. 答辯演練 -->
-        <div class="roadmap-step-card">
-          <div class="step-top">
-            <span class="step-num">6</span>
-            <span class="step-category">專家評審</span>
-          </div>
-          <div class="step-title"><i class="fa-solid fa-microphone-lines" style="color:#dc2626;"></i> 答辯演練：1月開展 2-3 輪模擬專家面試</div>
-          <div class="step-desc">
-            於每年 1 月正式申報前夕，力邀校外資深教育評委及校內歷屆卓越教師組成模擬專家組，進行 <strong>2-3 輪高強度全真模擬答辯與材料壓力測試</strong>，精準優化現場發言。
-          </div>
-          <div class="step-action-tag">
-            <i class="fa-solid fa-circle-check"></i> 核心抓手：全真模擬面試答辯，打磨應答邏輯與氣場儀態
-          </div>
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <button class="collapsible-header-btn" onclick="openPresentationByIndex(0)" title="以全螢幕投影片方式演講 (支援畫筆批註)">
+            <i class="fa-solid fa-chalkboard-user"></i> 全屏演講與白板批註
+          </button>
+          <button class="collapsible-header-btn" id="btnToggleRoadmap" onclick="toggleRoadmap(false)">
+            <i class="fa-solid fa-chevron-up"></i> 收合面版
+          </button>
         </div>
       </div>
 
-      <!-- 5 Strategic Principles Integration -->
-      <div class="strategy-card">
-        <div class="strategy-card-title">
-          <i class="fa-solid fa-gem"></i> 行政會核心決策指引精華（五大落地法則）
+      <!-- Collapsible Container -->
+      <div class="roadmap-collapse-wrapper" id="roadmapCollapseWrapper">
+        <!-- 6 Pillars Timeline Grid -->
+        <div class="roadmap-grid">
+          <!-- 1. 體制改革 -->
+          <div class="roadmap-step-card">
+            <div class="step-top">
+              <span class="step-num">1</span>
+              <span class="step-category">體制機制</span>
+            </div>
+            <div class="step-header-row">
+              <div class="step-title"><i class="fa-solid fa-users-gear" style="color:#2563eb;"></i> 體制改革：成立校級「申報專班」</div>
+              <button class="btn-card-expand" onclick="openPresentationById('step-1')" title="放大全屏展示並啟用畫筆"><i class="fa-solid fa-maximize"></i> 全屏演講</button>
+            </div>
+            <div class="step-desc">
+              改變教師單打獨鬥窘境。由<strong>副校長親自掛帥</strong>，教研主任主管學術成果凝練與科組資源調配，文宣主筆負責教育敘事與視覺打磨，實現全校合力護航。
+            </div>
+            <div class="step-action-tag">
+              <i class="fa-solid fa-circle-check"></i> 核心抓手：打破部門壁壘，設立榮譽申報專項行政協調機制
+            </div>
+          </div>
+
+          <!-- 2. 梯隊建設 -->
+          <div class="roadmap-step-card">
+            <div class="step-top">
+              <span class="step-num">2</span>
+              <span class="step-category">人才蓄水</span>
+            </div>
+            <div class="step-header-row">
+              <div class="step-title"><i class="fa-solid fa-seedling" style="color:#16a34a;"></i> 梯隊建設：建立「3+3 名師儲備池」</div>
+              <button class="btn-card-expand" onclick="openPresentationById('step-2')" title="放大全屏展示並啟用畫筆"><i class="fa-solid fa-maximize"></i> 全屏演講</button>
+            </div>
+            <div class="step-desc">
+              建立<strong>「3位近期衝刺 + 3位中青年種子」</strong>蓄水池機制。破除臨急湊材料弊病，提早 3 年鎖定教齡 8–15 年、深具教學熱誠與口碑的骨幹，賦予重點專案負責人職權。
+            </div>
+            <div class="step-action-tag">
+              <i class="fa-solid fa-circle-check"></i> 核心抓手：提前 3 年納入培育計劃，滾動更新候選人資料包
+            </div>
+          </div>
+
+          <!-- 3. 賽道突圍 -->
+          <div class="roadmap-step-card">
+            <div class="step-top">
+              <span class="step-num">3</span>
+              <span class="step-category">戰略定位</span>
+            </div>
+            <div class="step-header-row">
+              <div class="step-title"><i class="fa-solid fa-compass" style="color:#d97706;"></i> 賽道突圍：主攻「小學、幼教、德育特色」</div>
+              <button class="btn-card-expand" onclick="openPresentationById('step-3')" title="放大全屏展示並啟用畫筆"><i class="fa-solid fa-maximize"></i> 全屏演講</button>
+            </div>
+            <div class="step-desc">
+              中學數理競賽已成白熱化紅海。主動策劃進軍<strong>小學全科班主任、幼兒感統蒙氏、特殊教育融合、職教大健康及品德公民特色</strong>等政策傾斜之專屬保護名額。
+            </div>
+            <div class="step-action-tag">
+              <i class="fa-solid fa-circle-check"></i> 核心抓手：發掘小幼職特優勢，避開紅海尋求差異化突圍
+            </div>
+          </div>
+
+          <!-- 4. 前置成果 -->
+          <div class="roadmap-step-card">
+            <div class="step-top">
+              <span class="step-num">4</span>
+              <span class="step-category">顯性指標</span>
+            </div>
+            <div class="step-header-row">
+              <div class="step-title"><i class="fa-solid fa-award" style="color:#9333ea;"></i> 前置成果：全面攻堅《教學設計獎勵計劃》</div>
+              <button class="btn-card-expand" onclick="openPresentationById('step-4')" title="放大全屏展示並啟用畫筆"><i class="fa-solid fa-maximize"></i> 全屏演講</button>
+            </div>
+            <div class="step-desc">
+              教青局《教學設計獎勵計劃》獲獎為參選<strong>第一硬通貨</strong>。同步借鑑培正、濠江經驗，鎖定國際奧賽（IMO/ISEF/IOI/iGEM）、全國科技發明或國家教學成果獎。
+            </div>
+            <div class="step-action-tag">
+              <i class="fa-solid fa-circle-check"></i> 核心抓手：提前 2 年立項攻堅教研成果獎與各類標誌性賽事
+            </div>
+          </div>
+
+          <!-- 5. 文本精造 -->
+          <div class="roadmap-step-card">
+            <div class="step-top">
+              <span class="step-num">5</span>
+              <span class="step-category">申報材料</span>
+            </div>
+            <div class="step-header-row">
+              <div class="step-title"><i class="fa-solid fa-file-signature" style="color:#0891b2;"></i> 文本精造：嚴守 30 頁紅線與生命敘事</div>
+              <button class="btn-card-expand" onclick="openPresentationById('step-5')" title="放大全屏展示並啟用畫筆"><i class="fa-solid fa-maximize"></i> 全屏演講</button>
+            </div>
+            <div class="step-desc">
+              嚴守 30 頁審批上限，告別平庸流水帳。進行雜誌級視覺排版與數據論證，核心架構聚焦<strong>「教育格言＋痛點獨創破解法＋1至2位被徹底改變人生命運的典型學生故事」</strong>。
+            </div>
+            <div class="step-action-tag">
+              <i class="fa-solid fa-circle-check"></i> 核心抓手：文宣主筆深度介入，凝練教育家精神與師德光芒
+            </div>
+          </div>
+
+          <!-- 6. 答辯演練 -->
+          <div class="roadmap-step-card">
+            <div class="step-top">
+              <span class="step-num">6</span>
+              <span class="step-category">專家評審</span>
+            </div>
+            <div class="step-header-row">
+              <div class="step-title"><i class="fa-solid fa-microphone-lines" style="color:#dc2626;"></i> 答辯演練：1月開展 2-3 輪模擬專家面試</div>
+              <button class="btn-card-expand" onclick="openPresentationById('step-6')" title="放大全屏展示並啟用畫筆"><i class="fa-solid fa-maximize"></i> 全屏演講</button>
+            </div>
+            <div class="step-desc">
+              於每年 1 月正式申報前夕，力邀校外資深教育評委及校內歷屆卓越教師組成模擬專家組，進行 <strong>2-3 輪高強度全真模擬答辯與材料壓力測試</strong>，精準優化現場發言。
+            </div>
+            <div class="step-action-tag">
+              <i class="fa-solid fa-circle-check"></i> 核心抓手：全真模擬面試答辯，打磨應答邏輯與氣場儀態
+            </div>
+          </div>
         </div>
-        <div class="strategy-grid">
-          <div class="strategy-item">
-            <h4><i class="fa-regular fa-clock"></i> 提早3年蓄水機制</h4>
-            <p>鎖定教齡 8–15 年之教學名師，制定 3 年週期目標，賦予主持校本新課程研發或帶領示範學科梯隊之重任，拒絕臨急拼湊。</p>
+
+        <!-- 5 Strategic Principles Integration -->
+        <div class="strategy-card">
+          <div class="strategy-card-title">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <i class="fa-solid fa-gem"></i> 行政會核心決策指引精華（五大落地法則）
+            </div>
+            <span style="font-size:0.8rem; font-weight:normal; color:#15803d;">點擊卡片右上角按鈕即可全屏投影並進行自由批註</span>
           </div>
-          <div class="strategy-item">
-            <h4><i class="fa-solid fa-medal"></i> 標誌性硬核成果</h4>
-            <p>帶教學生奪得國際/全國頂級獎項或斬獲國家級教學成果獎，為評審委員提供無法撼動之客觀佐證與學界公信力。</p>
-          </div>
-          <div class="strategy-item">
-            <h4><i class="fa-solid fa-water"></i> 藍海特色賽道突破</h4>
-            <p>主攻小學整本書閱讀、幼兒情緒感統、特教個別化計劃（IEP）轉銜及職業技術課程協調，精準對接多元教育平衡政策。</p>
-          </div>
-          <div class="strategy-item">
-            <h4><i class="fa-solid fa-heart-pulse"></i> 教育家生命蛻變敘事</h4>
-            <p>以師德為魂，生動呈現如何化解學困生或邊緣學生心結、啟迪學生靈魂之鮮活案例，讓評審專家看見有溫度的育人情懷。</p>
-          </div>
-          <div class="strategy-item">
-            <h4><i class="fa-solid fa-users-viewfinder"></i> 制度化預答辯與專班</h4>
-            <p>校級文膽專班負責視覺與邏輯雕琢，多輪專家盲審與現場答辯演練，形成校園代代相傳的學術與榮譽共同體。</p>
+          <div class="strategy-grid">
+            <div class="strategy-item">
+              <div class="step-header-row">
+                <h4><i class="fa-regular fa-clock"></i> 提早3年蓄水機制</h4>
+                <button class="btn-card-expand" onclick="openPresentationById('principle-1')" title="全屏演講"><i class="fa-solid fa-maximize"></i> 演講</button>
+              </div>
+              <p>鎖定教齡 8–15 年之教學名師，制定 3 年週期目標，賦予主持校本新課程研發或帶領示範學科梯隊之重任，拒絕臨急拼湊。</p>
+            </div>
+            <div class="strategy-item">
+              <div class="step-header-row">
+                <h4><i class="fa-solid fa-medal"></i> 標誌性硬核成果</h4>
+                <button class="btn-card-expand" onclick="openPresentationById('principle-2')" title="全屏演講"><i class="fa-solid fa-maximize"></i> 演講</button>
+              </div>
+              <p>帶教學生奪得國際/全國頂級獎項或斬獲國家級教學成果獎，為評審委員提供無法撼動之客觀佐證與學界公信力。</p>
+            </div>
+            <div class="strategy-item">
+              <div class="step-header-row">
+                <h4><i class="fa-solid fa-water"></i> 藍海特色賽道突破</h4>
+                <button class="btn-card-expand" onclick="openPresentationById('principle-3')" title="全屏演講"><i class="fa-solid fa-maximize"></i> 演講</button>
+              </div>
+              <p>主攻小學整本書閱讀、幼兒情緒感統、特教個別化計劃（IEP）轉銜及職業技術課程協調，精準對接多元教育平衡政策。</p>
+            </div>
+            <div class="strategy-item">
+              <div class="step-header-row">
+                <h4><i class="fa-solid fa-heart-pulse"></i> 教育家生命蛻變敘事</h4>
+                <button class="btn-card-expand" onclick="openPresentationById('principle-4')" title="全屏演講"><i class="fa-solid fa-maximize"></i> 演講</button>
+              </div>
+              <p>以師德為魂，生動呈現如何化解學困生或邊緣學生心結、啟迪學生靈魂之鮮活案例，讓評審專家看見有溫度的育人情懷。</p>
+            </div>
+            <div class="strategy-item">
+              <div class="step-header-row">
+                <h4><i class="fa-solid fa-users-viewfinder"></i> 制度化預答辯與專班</h4>
+                <button class="btn-card-expand" onclick="openPresentationById('principle-5')" title="全屏演講"><i class="fa-solid fa-maximize"></i> 演講</button>
+              </div>
+              <p>校級文膽專班負責視覺與邏輯雕琢，多輪專家盲審與現場答辯演練，形成校園代代相傳的學術與榮譽共同體。</p>
+            </div>
           </div>
         </div>
       </div>
     </section>
+
 
     <!-- Charts Grid -->
     <div class="charts-grid">
@@ -3441,6 +4529,724 @@
         }
       });
     });
+  
+  // ============================================================
+  // PRESENTATION SLIDES & WHITEBOARD LOGIC
+  // ============================================================
+  const presSlides = [
+  {
+    "id": "step-1",
+    "category": "體制機制",
+    "badge": "第 1 支柱・專班機制",
+    "title": "體制改革：成立校級「申報專班」",
+    "subtitle": "副校長親自掛帥，教研主任主管學術，文宣主筆負責教育敘事與視覺打磨",
+    "icon": "fa-users-gear",
+    "color": "#2563eb",
+    "key_takeaway": "核心抓手：打破部門壁壘，變教師個人單打獨鬥為全校集體作戰",
+    "points": [
+      "<strong>痛點破解</strong>：過往許多優秀前線教師因平日教學繁重、不熟悉官方申報指標體系與文本規範，往往在材料初審或敘事提煉階段遺珠抱憾。",
+      "<strong>組長（副校長掛帥）</strong>：總攬全校戰略資源調配，拍板年度主申報方向，負責與校董會及行政會溝通，給予候選教師充份的減課與專案研發空間。",
+      "<strong>執行協調（教務/教研主任）</strong>：盤點該教師歷年教學節數、公開課示範、校本課程研發、獲獎論文及學生指導榮譽，形成無懈可擊的量化支撐鏈。",
+      "<strong>核心文膽（文宣主筆/語文名師）</strong>：專責材料文本架構雕琢，將枯燥課堂紀錄轉化為具備「教育家精神」的感人敘事，並把關雜誌級視覺排版。"
+    ],
+    "checklist": [
+      "每年 9 月召開校級專班成立會，確認年度重點申報候選人名單",
+      "建立「一人一檔」電子材料庫，分設：師德理念、課程創新、競賽帶教、學生蛻變四個子模組",
+      "教研處負責對接教青局最新政策指引，文宣處負責統一視覺範本與排版規格"
+    ]
+  },
+  {
+    "id": "step-2",
+    "category": "人才蓄水",
+    "badge": "第 2 支柱・梯隊蓄水",
+    "title": "梯隊建設：建立「3+3 名師儲備池」",
+    "subtitle": "3位成熟期近期衝刺 + 3位中青年種子蓄水池，提前 3 年週期化孵化",
+    "icon": "fa-seedling",
+    "color": "#16a34a",
+    "key_takeaway": "核心抓手：提早 3 年鎖定教齡 8–15 年之教學骨幹，確保材料具備足夠「時間厚度」",
+    "points": [
+      "<strong>蓄水池結構</strong>：建立常態化「3 位衝刺名師（教齡 12-20 年，成果已基本齊備）+ 3 位種子名師（教齡 6-12 年，爆發力強之潛力骨幹）」。",
+      "<strong>週期目標賦能</strong>：為每位種子名師制定「三年專項成長路徑」，每年保證賦予其負責 1 項校本特色新課程研發、帶領 1 支重點學科大賽隊伍。",
+      "<strong>避免臨急抱佛腳</strong>：卓越教師評審極其看重成果的「連續性」與「沉澱感」，3 年蓄水期可確保其發表論文、示範課、指導獲獎具有清晰的遞進邏輯。",
+      "<strong>師友傳幫帶機制</strong>：由校內歷屆已獲獎之卓越教師一對一定點指導種子教師，傳承申報答辯心法與教研積累經驗。"
+    ],
+    "checklist": [
+      "每學年結束時由行政會召開儲備池滾動評審，實施動態進出機制",
+      "為入池教師每年提供專項研習與境內外學術交流名額（如全國教學大賽、大灣區教研會）",
+      "設立種子教師專項教研基金，資助其出版校本教材、專題論文集或教具專利申報"
+    ]
+  },
+  {
+    "id": "step-3",
+    "category": "戰略定位",
+    "badge": "第 3 支柱・賽道突圍",
+    "title": "賽道突圍：主攻「小學、幼教、德育特色」",
+    "subtitle": "避開中學數理白熱化紅海，策略性進軍專屬政策保護名額與多元教育平衡賽道",
+    "icon": "fa-compass",
+    "color": "#d97706",
+    "key_takeaway": "核心抓手：發掘小幼職特全人優勢，精準契合特區政府多元教育均衡政策導向",
+    "points": [
+      "<strong>形勢研判</strong>：大數據顯示中學學段佔總獲獎人數近 70%，數理奧賽與高考神話已成高度內捲紅海，普通學校非國際金牌難以突破。",
+      "<strong>小學學段藍海（佔比 17.5%）</strong>：重點包裝「小學整本書閱讀跨學科教研」、「創思數學本土化實驗」、「資深班主任全人品格身教與家校共育網絡」。",
+      "<strong>幼兒學段藍海（佔比 6.4%）</strong>：深耕「蒙特梭利本土化實踐」、「幼兒感統遊戲化探索」、「傳統文化入園與情緒韌性啟蒙」，易在專家面試中展現動人師愛。",
+      "<strong>特教、職教與回歸教育</strong>：職業技術大健康照護（如中葡職中）、特殊教育個別化計劃（IEP）轉銜、成人夜間回歸教育（如商訓），政策支持度極高，極易獲得政府社會文化司及評審專家的特別肯定。"
+    ],
+    "checklist": [
+      "盤點校內小學部與幼稚園部的隱形名師，主動挖掘班級經營與愛生感人實例",
+      "協助小幼教師將零散的課堂心得提煉為具備理論支撐的「校本教學法」（如情境體驗教學法）",
+      "在跨學段申報時給予小學、幼教教師與中學名師完全同等的評審推薦資源與專班支持"
+    ]
+  },
+  {
+    "id": "step-4",
+    "category": "顯性指標",
+    "badge": "第 4 支柱・硬通貨成果",
+    "title": "前置成果：全面攻堅《教學設計獎勵計劃》",
+    "subtitle": "教青局獎項為參選第一硬通貨，同步鎖定國際奧賽、國家級教學成果獎標誌性突破",
+    "icon": "fa-award",
+    "color": "#9333ea",
+    "key_takeaway": "核心抓手：以教青局《教學設計獎勵計劃》優異獎為敲門磚，築牢客觀公信力",
+    "points": [
+      "<strong>硬通貨法則</strong>：歷屆大數據深度審核顯示，超過 80% 獲獎教師在申報前曾榮獲澳門教青局《教學設計獎勵計劃》優異獎、一等獎或教學教案設計大獎。",
+      "<strong>提前 2 年立項攻堅</strong>：學校行政會應將《教學設計獎勵計劃》視為卓越教師的「預備期必修考驗」，指派特約教研顧問指導教案打磨與課堂錄影。",
+      "<strong>國際與全國競賽硬核指標</strong>：數理科組借鑑培正、濠江經驗，鎖定國際奧賽（IMO/ISEF/IOI/iGEM）、全國青少年科創大賽奪牌；體藝科組攻堅學界錦標賽總冠軍與全國合唱/舞蹈最高獎。",
+      "<strong>國家級教學成果獎示範效應</strong>：廣大中學黃斯婷老師以《初中設計應用課程體系》勇奪國家級教學成果獎二等獎，樹立了「課堂實踐—成果凝練—國家級獲獎」的典範路徑。"
+    ],
+    "checklist": [
+      "將《教學設計獎勵計劃》獲獎列為校級申報卓越教師的優先推薦門檻",
+      "設立「重點競賽與教研專案攻堅庫」，匹配充足之教具採購與集訓實驗室資源",
+      "指導教師將日常教學實踐及時申報為教青局公開課、教研論文與教具發明專利"
+    ]
+  },
+  {
+    "id": "step-5",
+    "category": "申報材料",
+    "badge": "第 5 支柱・文本精造",
+    "title": "文本精造：嚴守 30 頁紅線與生命敘事",
+    "subtitle": "雜誌級高標視覺排版與數據論證，核心聚焦「格言＋獨創教法＋學生生命蛻變」",
+    "icon": "fa-file-signature",
+    "color": "#0891b2",
+    "key_takeaway": "核心抓手：文宣主筆深度介入，杜絕枯燥排課清單，凝練動人心弦的教育家精神",
+    "points": [
+      "<strong>嚴守 30 頁審批紅線</strong>：評審委員每年審閱大量材料，超出規定頁數或排版雜亂的材料極易引起審閱疲勞。必須進行字斟句酌的精確刪減。",
+      "<strong>雜誌級排版與數據論證</strong>：採用現代化圖文版式，高清實錄課堂照片、學生作品、榮譽獎狀掃描件、教育成效量化圖表（如及格率、滿意度、競賽梯隊數據）。",
+      "<strong>靈魂三問核心框架</strong>：",
+      "  1. <strong>教育格言與育人哲學</strong>：教師終身奉行的育人信念（如彭超「天地立心」、劉貳和「為藝術戰」、梁沛津「理論探索與想像力」）；",
+      "  2. <strong>突破性痛點解決</strong>：針對常規課堂頑疾、偏科生或學困生，教師創立了何種獨步澳門的校本教學法或教學工具？",
+      "  3. <strong>學生生命蛻變故事</strong>：具體詳述 1 至 2 位被該教師徹底改變人生命運的典型學生案例，展現潤物無聲的崇高師德。"
+    ],
+    "checklist": [
+      "申報材料文本交由專業設計人員與文宣主筆統一進行排版美化與校對",
+      "文本嚴格按「前言格言—專業成長—教學創新—育人故事—榮譽清單」五段式黃金結構呈現",
+      "附錄二維碼連結，提供高畫質微課教學視頻或學生活動實錄剪輯"
+    ]
+  },
+  {
+    "id": "step-6",
+    "category": "專家評審",
+    "badge": "第 6 支柱・全真答辯",
+    "title": "答辯演練：1月開展 2-3 輪全真專家面試",
+    "subtitle": "力邀校外資深教育評委與校內卓越名師，實施高強度模擬面試與材料壓力測試",
+    "icon": "fa-microphone-lines",
+    "color": "#dc2626",
+    "key_takeaway": "核心抓手：全真閉門高壓模擬，打磨演講氣場、應答邏輯與突發問題處變能力",
+    "points": [
+      "<strong>時間節點</strong>：於正式遞交申報材料前夕（每年 1 月），由副校長親自主持組織模擬面試專班。",
+      "<strong>模擬專家組陣容</strong>：邀請退休學校督導、澳門大學/高校教育學院學者、校內歷屆已獲卓越榮譽之名師，模擬真實評審委員會視角。",
+      "<strong>5 分鐘自述亮點提煉</strong>：反覆訓練候選教師在 300 秒內以極具感染力的語言，精準輸出個人教育格言、最亮眼之教研專利/教改突破及育人生命故事。",
+      "<strong>突發質詢與壓力測試</strong>：針對材料中的邊界問題、學科前沿爭議、與其他申報者相比之核心競爭力進行多角度追問，確保教師現場答辯自信自如、條理清晰。"
+    ],
+    "checklist": [
+      "安排專業攝影全程錄像，答辯後逐分鐘復盤教師的儀態、語速、眼神交流與關鍵詞表達",
+      "針對專家質詢提出的漏洞，在正式送審前對書面材料及佐證附件進行最後一輪修訂補充",
+      "為候選教師進行心理疏導與減壓，賦予行政會全體委員之堅定信任與祝福"
+    ]
+  },
+  {
+    "id": "principle-1",
+    "category": "戰略法則",
+    "badge": "決策指引 ①",
+    "title": "提早 3 年建立「卓越種子人才庫」與蓄水池機制",
+    "subtitle": "破除臨急拼湊弊病，鎖定教齡 8–15 年之教學骨幹，以 3 年為週期定製系統化成果鏈條",
+    "icon": "fa-clock",
+    "color": "#0d9488",
+    "key_takeaway": "核心法則：榮譽是長年深耕的自然水到渠成，而非短期填表湊數",
+    "points": [
+      "<strong>精準識別人才</strong>：行政會與人事處重點考察教齡在 8 至 15 年間、課堂教學深受歷屆學生愛戴、同儕評價極高的青壯年名師。",
+      "<strong>三年任務清單</strong>：T-3 年立項校本特色課改；T-2 年攻堅教青局《教學設計獎勵計劃》或學界大賽；T-1 年開展公開課交流與教學著述出版。",
+      "<strong>制度性蓄水</strong>：各科組每年至少儲備 1 名種子教師，形成「老帶新、熟帶青」可持續發展的榮譽傳承梯隊。"
+    ],
+    "checklist": [
+      "建立校級種子教師檔案庫，每年底由教務處審查其教研進展",
+      "給予種子教師跨校交流與大灣區名校同台賽課之優先權",
+      "在校級評優中給予種子教師教研專項獎勵"
+    ]
+  },
+  {
+    "id": "principle-2",
+    "category": "戰略法則",
+    "badge": "決策指引 ②",
+    "title": "鎖定顯性標誌性成果（國際/全國競賽金牌與成果獎）",
+    "subtitle": "以客觀無可爭議的硬指標征服專家組，借鑑培正、濠江、鏡平之頂尖孵化路徑",
+    "icon": "fa-medal",
+    "color": "#eab308",
+    "key_takeaway": "核心法則：標誌性成果是評審專家最難以忽視、最具客觀公信力的敲門磚",
+    "points": [
+      "<strong>頂級競賽突圍</strong>：指導學生在國際奧林匹克競賽（IMO/ISEF/IOI/iGEM）、全國青少年科創大賽取得金牌突破，具備震撼性的學界影響力。",
+      "<strong>國家級成果獎突破</strong>：積極將課堂實踐與課程體系開發申報為國家級或特區級教學成果獎，賦予教師國家級學術背書。",
+      "<strong>體育藝術大賽金獎</strong>：在學界排球、田徑、籃球、全國合唱節、學界舞蹈大賽奪冠，是五育並舉不可或缺的重磅指標。"
+    ],
+    "checklist": [
+      "為重點競賽梯隊設立專項教練津貼與實驗器材採購預算",
+      "邀請海內外競賽金牌教練入校進行專題指導與賽題培訓",
+      "對取得國際/全國標誌性突破的指導教師進行全校表彰並納入申報頭部候選人"
+    ]
+  },
+  {
+    "id": "principle-3",
+    "category": "戰略法則",
+    "badge": "決策指引 ③",
+    "title": "避開數理紅海，策略性進軍「小學、特教、職教、全人」藍海",
+    "subtitle": "精準對接特區政府多元教育均衡政策，發掘非高等教育體系中的差異化競爭優勢",
+    "icon": "fa-water",
+    "color": "#0284c7",
+    "key_takeaway": "核心法則：在政策高度支持但申報者較少的冷門賽道，往往具有最高獲獎勝率",
+    "points": [
+      "<strong>賽道差異化</strong>：中學數理已成各大名校頂級選手廝殺的紅海，普通學校很難單純依靠常規教學脫穎而出。",
+      "<strong>小學語文與整本書閱讀</strong>：展現小學低中年級語文奠基、中華文化經典誦讀與學生文學素養培育。",
+      "<strong>幼兒全人發展</strong>：蒙特梭利、感統發展、情緒自我調節及生活常規培養，極能體現幼師無微不至的奉獻精神。",
+      "<strong>融合教育與健康職教</strong>：特教 IEP 個別化教育方案、職教校企合作課程協調員，切中澳門「1+4」適度多元與弱勢群體關懷核心。"
+    ],
+    "checklist": [
+      "主動在小學部與幼稚園設立專案教研組，為申報儲備素材",
+      "鼓勵融合教育資源教師將成功個案總結為轉銜支持論文與案例集",
+      "在職教領域強化與本澳醫療機構、企業聯動之產學協同成果"
+    ]
+  },
+  {
+    "id": "principle-4",
+    "category": "戰略法則",
+    "badge": "決策指引 ④",
+    "title": "凝練「教育家精神」與生命蛻變敘事",
+    "subtitle": "拒絕平庸流水帳，以師德為魂，生動展現教師點亮心靈、徹底扭轉學生人生的感人案例",
+    "icon": "fa-heart-pulse",
+    "color": "#ec4899",
+    "key_takeaway": "核心法則：數據證明能力，故事打動人心；兩者兼備方顯卓越大師風骨",
+    "points": [
+      "<strong>教育家精神</strong>：評審專家極度反感只是羅列兼任職務、課堂節數的功利性申報材料，極為渴望看到教師對教育本質的終身追求與熱誠。",
+      "<strong>提煉標誌性教育格言</strong>：一句朗朗上口且貫穿始終的信念（如「做有溫度的引路人」、「為天地立心」、「默默耕種，靜待花開」）。",
+      "<strong>生動的生命蛻變案例</strong>：詳細記錄面對迷茫、叛逆、家庭變故或學業嚴重受挫之學生，教師如何以數年如一日的耐心與智慧，將其引導至自信陽光的人生正途。"
+    ],
+    "checklist": [
+      "專班文膽深入採訪教師本人及其畢業生，挖掘最動人的真實故事素材",
+      "在申報材料中保留 1-2 封畢業生或家長的真情致謝信件原件影本",
+      "確保敘事細節豐富具體（如時間、對話、轉折心理），杜絕空洞說教"
+    ]
+  },
+  {
+    "id": "principle-5",
+    "category": "戰略法則",
+    "badge": "決策指引 ⑤",
+    "title": "設立校級申報專班與制度化預評審",
+    "subtitle": "校級文膽深度介入視覺雕琢，多輪專家閉門壓力測試，打造學校榮譽共同體",
+    "icon": "fa-users-viewfinder",
+    "color": "#8b5cf6",
+    "key_takeaway": "核心法則：卓越教師是一所學校綜合教研實力與行政動員水準的最高體現",
+    "points": [
+      "<strong>全校協同護航</strong>：卓越教師申報不僅是教師個人的事，更是全校展現辦學特色與師資美譽的重大校政行動。",
+      "<strong>文宣與教研雙輪驅動</strong>：教研處確保學術數據精準權威，文宣組負責高格調視覺設計，使材料在數十份候選檔案中第一眼脫穎而出。",
+      "<strong>嚴格的校內同行評議</strong>：正式上報前由校領導班子進行閉門初審與逐頁審定，嚴控質量標準，捍衛學校學術聲譽。"
+    ],
+    "checklist": [
+      "每學年將卓越教師申報列為學校行政會重大決策督辦事項",
+      "制定校本申報材料內部審核進度甘特圖（9月啟動、11月初稿、12月精修、1月模擬面試）",
+      "對為申報專班付出辛勤勞動的教研與文宣骨幹給予相應工作量折算與獎勵"
+    ]
+  }
+];
+  let currentSlideIdx = 0;
+  let currentTool = 'select'; // 'select', 'pen', 'highlighter', 'eraser'
+  let currentColor = '#ef4444';
+  let currentPenSize = 4;
+  let isDrawing = false;
+  let lastX = 0;
+  let lastY = 0;
+
+  // History per slide for undo
+  const slideDrawings = {}; // slideIdx -> array of ImageData or canvas snapshots
+  const slideUndoStack = {}; // slideIdx -> stack of canvas states
+
+  // Toggle Roadmap Section Collapsed / Expanded
+  function toggleRoadmap(expandOnly = false) {
+    const wrapper = document.getElementById('roadmapCollapseWrapper');
+    const banner = document.getElementById('roadmapCollapsedBanner');
+    const sec = document.getElementById('roadmapSection');
+    
+    if (expandOnly) {
+      wrapper.classList.remove('collapsed');
+      banner.style.display = 'none';
+      sec.style.display = 'block';
+      localStorage.setItem('roadmap_collapsed', 'false');
+    } else {
+      const isCurrentlyCollapsed = wrapper.classList.contains('collapsed');
+      if (isCurrentlyCollapsed) {
+        wrapper.classList.remove('collapsed');
+        banner.style.display = 'none';
+        sec.style.display = 'block';
+        localStorage.setItem('roadmap_collapsed', 'false');
+      } else {
+        wrapper.classList.add('collapsed');
+        banner.style.display = 'flex';
+        sec.style.display = 'none';
+        localStorage.setItem('roadmap_collapsed', 'true');
+      }
+    }
+  }
+
+  // Initialize collapse state from localStorage
+  if (localStorage.getItem('roadmap_collapsed') === 'true') {
+    toggleRoadmap(false);
+  }
+
+  // Presentation Modal Opening
+  function openPresentationById(slideId) {
+    const idx = presSlides.findIndex(s => s.id === slideId);
+    if (idx !== -1) {
+      openPresentationByIndex(idx);
+    } else {
+      openPresentationByIndex(0);
+    }
+  }
+
+  function openPresentationByIndex(idx) {
+    currentSlideIdx = Math.max(0, Math.min(idx, presSlides.length - 1));
+    const modal = document.getElementById('presentationModal');
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+
+    // Render Slide Content
+    renderSlideContent(currentSlideIdx);
+
+    // Initialize Canvas Size
+    setTimeout(() => {
+      initCanvasSize();
+      restoreCanvasState();
+    }, 60);
+
+    // Add keyboard listener
+    window.addEventListener('keydown', handlePresKeydown);
+  }
+
+  function closePresentation() {
+    const modal = document.getElementById('presentationModal');
+    modal.style.display = 'none';
+    document.body.style.overflow = '';
+    window.removeEventListener('keydown', handlePresKeydown);
+    
+    // If browser in fullscreen, exit
+    if (document.fullscreenElement) {
+      document.exitFullscreen().catch(() => {});
+    }
+  }
+
+  function closePresentationIfOutside(e) {
+    if (e.target.classList.contains('pres-backdrop')) {
+      closePresentation();
+    }
+  }
+
+  function handlePresKeydown(e) {
+    if (e.key === 'Escape') {
+      closePresentation();
+    } else if (e.key === 'ArrowRight' || e.key === 'PageDown') {
+      nextSlide();
+    } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+      prevSlide();
+    }
+  }
+
+  function prevSlide() {
+    if (currentSlideIdx > 0) {
+      saveCanvasState();
+      currentSlideIdx--;
+      renderSlideContent(currentSlideIdx);
+      setTimeout(() => {
+        initCanvasSize();
+        restoreCanvasState();
+      }, 30);
+    }
+  }
+
+  function nextSlide() {
+    if (currentSlideIdx < presSlides.length - 1) {
+      saveCanvasState();
+      currentSlideIdx++;
+      renderSlideContent(currentSlideIdx);
+      setTimeout(() => {
+        initCanvasSize();
+        restoreCanvasState();
+      }, 30);
+    }
+  }
+
+  function renderSlideContent(idx) {
+    const s = presSlides[idx];
+    document.getElementById('presCategoryBadge').innerText = s.badge;
+    document.getElementById('presSlideCounter').innerText = `${idx + 1} / ${presSlides.length}`;
+
+    const area = document.getElementById('slideContentArea');
+    
+    let pointsHtml = s.points.map(p => `
+      <div class="slide-point-card">${p}</div>
+    `).join('');
+
+    let checklistHtml = '';
+    if (s.checklist && s.checklist.length > 0) {
+      checklistHtml = `
+        <div class="slide-checklist-box">
+          <div class="slide-checklist-title">
+            <i class="fa-solid fa-list-check"></i> 行政會落實行動檢核表 (Actionable Deliverables)
+          </div>
+          ${s.checklist.map(item => `
+            <div class="slide-checklist-item">
+              <i class="fa-solid fa-circle-check"></i>
+              <div>${item}</div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    area.innerHTML = `
+      <div class="slide-step-badge" style="background:${s.color}15; color:${s.color};">
+        <i class="fa-solid ${s.icon}"></i> ${s.category}
+      </div>
+      <h2 class="slide-title">${s.title}</h2>
+      <div class="slide-subtitle">${s.subtitle}</div>
+
+      <div class="slide-callout-box" style="border-left-color:${s.color};">
+        <i class="fa-solid fa-bullseye" style="font-size:1.3rem;"></i>
+        <div>${s.key_takeaway}</div>
+      </div>
+
+      <div class="slide-points-grid">
+        ${pointsHtml}
+      </div>
+
+      ${checklistHtml}
+    `;
+
+    // Scroll to top
+    area.scrollTop = 0;
+  }
+
+  // ============================================================
+  // CANVAS DRAWING & ANNOTATION ENGINE (高精度白板批註系統)
+  // ============================================================
+  const canvas = document.getElementById('annotationCanvas');
+  const ctx = canvas ? canvas.getContext('2d') : null;
+
+  function initCanvasSize() {
+    const viewport = document.getElementById('presViewport');
+    if (!viewport || !canvas) return;
+
+    const rect = viewport.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+
+    // Save existing image before resize if already initialized
+    let tempImg = null;
+    if (canvas.width > 0 && canvas.height > 0) {
+      tempImg = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    }
+
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    canvas.style.width = rect.width + 'px';
+    canvas.style.height = rect.height + 'px';
+
+    ctx.scale(dpr, dpr);
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+
+    if (tempImg) {
+      ctx.putImageData(tempImg, 0, 0);
+    }
+  }
+
+  window.addEventListener('resize', () => {
+    if (document.getElementById('presentationModal').style.display === 'flex') {
+      initCanvasSize();
+    }
+  });
+
+  function setTool(tool) {
+    currentTool = tool;
+    
+    // Update toolbar buttons
+    document.getElementById('btnToolSelect').classList.toggle('active', tool === 'select');
+    document.getElementById('btnToolPen').classList.toggle('active', tool === 'pen');
+    document.getElementById('btnToolHighlighter').classList.toggle('active', tool === 'highlighter');
+    document.getElementById('btnToolEraser').classList.toggle('active', tool === 'eraser');
+
+    // Update canvas interaction mode
+    canvas.classList.remove('active-pen', 'active-eraser');
+    if (tool === 'pen' || tool === 'highlighter') {
+      canvas.classList.add('active-pen');
+    } else if (tool === 'eraser') {
+      canvas.classList.add('active-eraser');
+    }
+  }
+
+  function setColor(colorHex, dotEl) {
+    currentColor = colorHex;
+    document.querySelectorAll('.color-dot').forEach(d => d.classList.remove('active'));
+    if (dotEl) dotEl.classList.add('active');
+
+    // Automatically switch to pen if select or eraser was active
+    if (currentTool === 'select' || currentTool === 'eraser') {
+      setTool('pen');
+    }
+  }
+
+  function setPenSize(sz) {
+    currentPenSize = parseInt(sz) || 4;
+  }
+
+  function getCanvasCoords(e) {
+    const rect = canvas.getBoundingClientRect();
+    return {
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top
+    };
+  }
+
+  // Pointer Events for Stylus / Mouse / Touch
+  canvas.addEventListener('pointerdown', (e) => {
+    if (currentTool === 'select') return;
+    isDrawing = true;
+    const pos = getCanvasCoords(e);
+    lastX = pos.x;
+    lastY = pos.y;
+    canvas.setPointerCapture(e.pointerId);
+
+    // Save state for undo before starting this stroke
+    pushUndoState();
+
+    // Draw single point for dotting
+    drawStroke(pos.x, pos.y);
+  });
+
+  canvas.addEventListener('pointermove', (e) => {
+    if (!isDrawing || currentTool === 'select') return;
+    const pos = getCanvasCoords(e);
+    drawStroke(pos.x, pos.y);
+    lastX = pos.x;
+    lastY = pos.y;
+  });
+
+  canvas.addEventListener('pointerup', (e) => {
+    if (!isDrawing) return;
+    isDrawing = false;
+    canvas.releasePointerCapture(e.pointerId);
+  });
+
+  canvas.addEventListener('pointercancel', () => {
+    isDrawing = false;
+  });
+
+  function drawStroke(x, y) {
+    ctx.beginPath();
+    ctx.moveTo(lastX, lastY);
+    ctx.lineTo(x, y);
+
+    if (currentTool === 'eraser') {
+      ctx.globalCompositeOperation = 'destination-out';
+      ctx.lineWidth = currentPenSize * 4;
+      ctx.strokeStyle = 'rgba(0,0,0,1)';
+    } else if (currentTool === 'highlighter') {
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.lineWidth = currentPenSize * 4;
+      // Semi-transparent color
+      ctx.strokeStyle = currentColor + '55'; // 33% opacity hex
+    } else {
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.lineWidth = currentPenSize;
+      ctx.strokeStyle = currentColor;
+    }
+
+    ctx.stroke();
+    ctx.closePath();
+  }
+
+  function pushUndoState() {
+    if (!slideUndoStack[currentSlideIdx]) {
+      slideUndoStack[currentSlideIdx] = [];
+    }
+    // Store snapshot dataURL or ImageData
+    slideUndoStack[currentSlideIdx].push(canvas.toDataURL());
+    if (slideUndoStack[currentSlideIdx].length > 15) {
+      slideUndoStack[currentSlideIdx].shift();
+    }
+  }
+
+  function undoCanvas() {
+    if (!slideUndoStack[currentSlideIdx] || slideUndoStack[currentSlideIdx].length === 0) {
+      clearCanvas();
+      return;
+    }
+    const prevDataUrl = slideUndoStack[currentSlideIdx].pop();
+    const img = new Image();
+    img.onload = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const rect = canvas.getBoundingClientRect();
+      ctx.drawImage(img, 0, 0, rect.width, rect.height);
+    };
+    img.src = prevDataUrl;
+  }
+
+  function clearCanvas() {
+    if (!ctx) return;
+    pushUndoState();
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
+
+  function saveCanvasState() {
+    if (!canvas) return;
+    slideDrawings[currentSlideIdx] = canvas.toDataURL();
+  }
+
+  function restoreCanvasState() {
+    if (!ctx || !canvas) return;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    if (slideDrawings[currentSlideIdx]) {
+      const img = new Image();
+      img.onload = () => {
+        const rect = canvas.getBoundingClientRect();
+        ctx.drawImage(img, 0, 0, rect.width, rect.height);
+      };
+      img.src = slideDrawings[currentSlideIdx];
+    }
+  }
+
+  function toggleBrowserFullscreen() {
+    const container = document.getElementById('presContainer');
+    const icon = document.getElementById('fsIcon');
+    if (!document.fullscreenElement) {
+      container.requestFullscreen().then(() => {
+        icon.classList.remove('fa-expand');
+        icon.classList.add('fa-compress');
+        setTimeout(initCanvasSize, 100);
+      }).catch(() => {});
+    } else {
+      document.exitFullscreen().then(() => {
+        icon.classList.remove('fa-compress');
+        icon.classList.add('fa-expand');
+        setTimeout(initCanvasSize, 100);
+      }).catch(() => {});
+    }
+  }
+
   </script>
+
+  <!-- ============================================================
+       FULLSCREEN PRESENTATION & WHITEBOARD ANNOTATION MODAL
+       ============================================================ -->
+  <div id="presentationModal" class="pres-modal" style="display: none;">
+    <!-- Presentation Backdrop -->
+    <div class="pres-backdrop" onclick="closePresentationIfOutside(event)"></div>
+
+    <!-- Presentation Container -->
+    <div class="pres-container" id="presContainer">
+      
+      <!-- Top Pres Toolbar -->
+      <div class="pres-top-bar">
+        <div class="pres-brand">
+          <span class="pres-badge" id="presCategoryBadge">體制機制</span>
+          <span class="pres-counter" id="presSlideCounter">1 / 11</span>
+        </div>
+        
+        <!-- Whiteboard Annotation Toolbar -->
+        <div class="wb-toolbar" id="wbToolbar">
+          <button class="wb-btn active" id="btnToolSelect" title="指針/選取模式 (不繪畫)" onclick="setTool('select')">
+            <i class="fa-solid fa-arrow-pointer"></i>
+          </button>
+          <button class="wb-btn" id="btnToolPen" title="畫筆 (可自由書寫批註)" onclick="setTool('pen')">
+            <i class="fa-solid fa-pen"></i>
+          </button>
+          <button class="wb-btn" id="btnToolHighlighter" title="螢光筆 (半透明重點標記)" onclick="setTool('highlighter')">
+            <i class="fa-solid fa-highlighter"></i>
+          </button>
+          <button class="wb-btn" id="btnToolEraser" title="橡皮擦 (擦除筆跡)" onclick="setTool('eraser')">
+            <i class="fa-solid fa-eraser"></i>
+          </button>
+          
+          <div class="wb-divider"></div>
+          
+          <!-- Color Palette -->
+          <div class="wb-colors">
+            <span class="color-dot active" style="background: #ef4444;" data-color="#ef4444" onclick="setColor('#ef4444', this)" title="紅色"></span>
+            <span class="color-dot" style="background: #eab308;" data-color="#eab308" onclick="setColor('#eab308', this)" title="黃色"></span>
+            <span class="color-dot" style="background: #2563eb;" data-color="#2563eb" onclick="setColor('#2563eb', this)" title="藍色"></span>
+            <span class="color-dot" style="background: #16a34a;" data-color="#16a34a" onclick="setColor('#16a34a', this)" title="綠色"></span>
+            <span class="color-dot" style="background: #ffffff; border: 1px solid #94a3b8;" data-color="#ffffff" onclick="setColor('#ffffff', this)" title="白色"></span>
+          </div>
+          
+          <div class="wb-divider"></div>
+          
+          <!-- Stroke Size Selector -->
+          <select id="penSizeSelect" class="wb-select" onchange="setPenSize(this.value)" title="筆觸粗細">
+            <option value="2">細筆 (2px)</option>
+            <option value="4" selected>中筆 (4px)</option>
+            <option value="8">粗筆 (8px)</option>
+            <option value="16">特粗 (16px)</option>
+          </select>
+          
+          <div class="wb-divider"></div>
+          
+          <button class="wb-btn" title="撤銷上一筆" onclick="undoCanvas()">
+            <i class="fa-solid fa-rotate-left"></i>
+          </button>
+          <button class="wb-btn danger" title="一鍵清除本頁所有筆跡" onclick="clearCanvas()">
+            <i class="fa-solid fa-trash-can"></i>
+          </button>
+        </div>
+
+        <div class="pres-actions">
+          <button class="pres-btn-icon" title="全螢幕切換" onclick="toggleBrowserFullscreen()">
+            <i class="fa-solid fa-expand" id="fsIcon"></i>
+          </button>
+          <button class="pres-btn-icon close" title="關閉全屏演講 (Esc)" onclick="closePresentation()">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Slide Viewport (Content + Overlay Canvas) -->
+      <div class="pres-viewport" id="presViewport">
+        <!-- Interactive Drawing Canvas -->
+        <canvas id="annotationCanvas" class="pres-canvas"></canvas>
+
+        <!-- Slide HTML Content Container -->
+        <div class="slide-content-area" id="slideContentArea">
+          <!-- Populated dynamically by JS -->
+        </div>
+      </div>
+
+      <!-- Bottom Nav Controls -->
+      <div class="pres-bottom-bar">
+        <button class="pres-nav-btn" onclick="prevSlide()">
+          <i class="fa-solid fa-arrow-left"></i> 上一個 (Prev)
+        </button>
+        <div class="pres-hint">
+          <i class="fa-regular fa-keyboard"></i> 提示：可用鍵盤 ← / → 翻頁，Esc 關閉，畫筆可隨時在投影片上書寫與擦除
+        </div>
+        <button class="pres-nav-btn" onclick="nextSlide()">
+          下一個 (Next) <i class="fa-solid fa-arrow-right"></i>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
 </body>
 </html>
