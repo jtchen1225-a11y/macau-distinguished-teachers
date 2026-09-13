@@ -1491,7 +1491,24 @@
       gap: 6px;
     }
 
-  </style>
+  
+    /* Ensure advanced section chart cards keep dark theme */
+    .advanced-analytics-section .chart-card,
+    .radar-chart-card {
+      background: #1e293b !important;
+      border: 1px solid rgba(255, 255, 255, 0.12) !important;
+      color: #f8fafc !important;
+    }
+    .advanced-analytics-section .chart-title,
+    .radar-chart-card .chart-title {
+      color: #ffffff !important;
+    }
+    .advanced-analytics-section .chart-subtitle,
+    .radar-chart-card .chart-subtitle {
+      color: #94a3b8 !important;
+    }
+
+</style>
 </head>
 <body>
 
@@ -4641,6 +4658,326 @@
     }
 
     // Charts Initialization
+    
+    // ============================================================
+    // RADAR CHART & PREDICTION CALCULATOR SUPPORT FUNCTIONS
+    // ============================================================
+    const radarSchoolData = {
+      '培正中學': {
+        name: '培正中學',
+        total: 29,
+        share: '17.0%',
+        color: '#3b82f6',
+        bg: 'rgba(59, 130, 246, 0.2)',
+        metrics: [9, 5, 6, 5, 8, 1],
+        dna: '全澳科普創客發源地・國際奧賽金牌體系・幼小創思孵化器',
+        topTeachers: '劉冠華(物理水底機器人)、梁沛津(物理理論)、閔好年(幼小創思)、李振邦(STEAM)',
+        insight: '培正具備全澳最成熟的「校企科研—指導大賽—著述出版」流水線，在物理創客與幼小創思兩大極端賽道形成強大雙輪驅動。'
+      },
+      '濠江中學': {
+        name: '濠江中學',
+        total: 28,
+        share: '16.4%',
+        color: '#ef4444',
+        bg: 'rgba(239, 68, 68, 0.2)',
+        metrics: [6, 4, 9, 4, 8, 1],
+        dna: '愛國愛澳人文重鎮・數理競賽強校・五育藝體與英才幼教',
+        topTeachers: '康玉專(化學奧賽)、王世澤(小學數學)、陳玉潔(初中語文)、李守球(化學)',
+        insight: '濠江在人文歷史與語文領域佔據絕對壓倒性優勢（9人獲獎），結合英才分校小幼高階教研，形成全方位無死角的申報矩陣。'
+      },
+      '聖公會(澳門)蔡高中學': {
+        name: '聖公會(澳門)蔡高中學',
+        total: 14,
+        share: '8.2%',
+        color: '#10b981',
+        bg: 'rgba(16, 185, 129, 0.2)',
+        metrics: [2, 2, 3, 4, 2, 2],
+        dna: '五育美育特色突圍・生命品德關懷・陶藝合唱與高中數學',
+        topTeachers: '王宏(視覺藝術陶藝)、胡俊明(高中數學)、夏麗珠(生命教育)、鄭慧蘭(合唱美育)',
+        insight: '蔡高巧妙避開與培正/濠江在數理創客的正面火拼，以視覺陶藝、合唱藝術及生命關懷走出極具特色的高質量突圍之路。'
+      },
+      '鏡平學校': {
+        name: '鏡平學校',
+        total: 12,
+        share: '7.0%',
+        color: '#f59e0b',
+        bg: 'rgba(245, 158, 11, 0.2)',
+        metrics: [6, 1, 1, 2, 2, 1],
+        dna: 'STREAM科技與IOI資訊奧賽・理化生科組拔尖・資深幼教',
+        topTeachers: '蔡鏢(國際資訊奧賽IOI金牌教練)、杜正玲(幼兒教育)、董淑珍(數學科組長)',
+        insight: '鏡平聚焦 STREAM 創科與國際資訊奧林匹克競賽，在電腦軟體與物聯網賽道累積了全澳公認的權威成果。'
+      },
+      '勞校中學': {
+        name: '勞校中學',
+        total: 9,
+        share: '5.3%',
+        color: '#8b5cf6',
+        bg: 'rgba(139, 92, 246, 0.2)',
+        metrics: [2, 1, 2, 2, 2, 0],
+        dna: '物理創客猛班體系・文史寫作傳承・全學段均衡發展',
+        topTeachers: '林俊猛(物理創客與猛班體系)、郭桂豪(中學歷史)、方艷嫦(語文寫作)',
+        insight: '勞校以「物理創客猛班」作為標誌性金字招牌，帶動文史、藝術與小學各學段骨幹協同突圍，品牌辨識度極高。'
+      },
+      '教業中學': {
+        name: '教業中學',
+        total: 9,
+        share: '5.3%',
+        color: '#06b6d4',
+        bg: 'rgba(6, 182, 212, 0.2)',
+        metrics: [3, 1, 3, 1, 1, 0],
+        dna: '史地國情教學高地・初小語文教改・機器人創客與排球',
+        topTeachers: '鍾子程(歷史史地組)、施虹冰(初中語文組長)、陳唯健(體育排球)',
+        insight: '教業深耕歷史國情教育，以《百年傳承》等校本教材為載體，結合語文名師引領與機器人競賽，展現文理兼備優勢。'
+      }
+    };
+
+    let radarChartInstance = null;
+    const radarDimensions = ['STEM創科', '數理奧賽', '人文文史', '五育藝體', '幼小教研', '全人德育/特教'];
+
+    function initRadarChart() {
+      const ctx = document.getElementById('radarChart');
+      if (!ctx) return;
+      
+      const defaultSchool = radarSchoolData['培正中學'];
+      radarChartInstance = new Chart(ctx, {
+        type: 'radar',
+        data: {
+          labels: radarDimensions,
+          datasets: [{
+            label: defaultSchool.name,
+            data: defaultSchool.metrics,
+            borderColor: defaultSchool.color,
+            backgroundColor: defaultSchool.bg,
+            borderWidth: 2.5,
+            pointBackgroundColor: defaultSchool.color,
+            pointBorderColor: '#fff',
+            pointHoverBackgroundColor: '#fff',
+            pointHoverBorderColor: defaultSchool.color,
+            pointRadius: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              labels: { color: '#cbd5e1', font: { size: 11 } }
+            }
+          },
+          scales: {
+            r: {
+              angleLines: { color: 'rgba(255, 255, 255, 0.12)' },
+              grid: { color: 'rgba(255, 255, 255, 0.08)' },
+              pointLabels: {
+                color: '#f8fafc',
+                font: { size: 11, weight: '600' }
+              },
+              ticks: {
+                backdropColor: 'transparent',
+                color: '#94a3b8',
+                stepSize: 2,
+                font: { size: 9 }
+              },
+              suggestedMin: 0,
+              suggestedMax: 10
+            }
+          }
+        }
+      });
+      renderRadarSchoolInfo('培正中學');
+    }
+
+    function switchRadarSchool(schoolKey, btnEl) {
+      if (btnEl) {
+        document.querySelectorAll('.radar-btn').forEach(b => b.classList.remove('active'));
+        btnEl.classList.add('active');
+      }
+
+      if (!radarChartInstance) return;
+
+      if (schoolKey === 'ALL') {
+        radarChartInstance.data.datasets = Object.keys(radarSchoolData).map(k => {
+          const s = radarSchoolData[k];
+          return {
+            label: s.name,
+            data: s.metrics,
+            borderColor: s.color,
+            backgroundColor: s.bg,
+            borderWidth: 1.8,
+            pointRadius: 2.5
+          };
+        });
+        radarChartInstance.update();
+        renderRadarAllSchoolsInfo();
+      } else {
+        const s = radarSchoolData[schoolKey];
+        if (!s) return;
+        radarChartInstance.data.datasets = [{
+          label: s.name,
+          data: s.metrics,
+          borderColor: s.color,
+          backgroundColor: s.bg,
+          borderWidth: 2.5,
+          pointBackgroundColor: s.color,
+          pointBorderColor: '#fff',
+          pointRadius: 4
+        }];
+        radarChartInstance.update();
+        renderRadarSchoolInfo(schoolKey);
+      }
+    }
+
+    function renderRadarSchoolInfo(schoolKey) {
+      const s = radarSchoolData[schoolKey];
+      const panel = document.getElementById('radarSchoolAnalysis');
+      if (!panel || !s) return;
+
+      panel.innerHTML = `
+        <div>
+          <span class="school-profile-badge">全澳名校畫像 No. 1 ~ 6</span>
+          <div class="school-profile-title">${s.name}</div>
+          <div class="school-profile-dna"><i class="fa-solid fa-dna"></i> ${s.dna}</div>
+          
+          <div class="school-metrics-list">
+            <div class="school-metric-item"><span>歷屆累計獲獎</span><strong>${s.total} 人 (${s.share})</strong></div>
+            <div class="school-metric-item"><span>STEM創科成果</span><strong>${s.metrics[0]} 人</strong></div>
+            <div class="school-metric-item"><span>數理奧賽成果</span><strong>${s.metrics[1]} 人</strong></div>
+            <div class="school-metric-item"><span>人文文史著述</span><strong>${s.metrics[2]} 人</strong></div>
+            <div class="school-metric-item"><span>五育美藝體育</span><strong>${s.metrics[3]} 人</strong></div>
+            <div class="school-metric-item"><span>幼小基礎教研</span><strong>${s.metrics[4]} 人</strong></div>
+          </div>
+
+          <div style="font-size:0.82rem; color:#94a3b8; margin-bottom:10px;">
+            <strong style="color:#e2e8f0;"><i class="fa-solid fa-award"></i> 代表性標誌名師：</strong> ${s.topTeachers}
+          </div>
+
+          <div class="school-takeaway-box">
+            <i class="fa-solid fa-chess-knight"></i> <strong>行政會戰略啟示：</strong> ${s.insight}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderRadarAllSchoolsInfo() {
+      const panel = document.getElementById('radarSchoolAnalysis');
+      if (!panel) return;
+      panel.innerHTML = `
+        <div>
+          <span class="school-profile-badge" style="background: #7c3aed;">全澳六強綜合透視</span>
+          <div class="school-profile-title">TOP 6 名校競爭優勢綜合對比</div>
+          <div class="school-profile-dna"><i class="fa-solid fa-chart-line"></i> 兩大巨頭(培正/濠江)強佔33.3% + 中堅四強鼎立</div>
+          <div style="font-size: 0.85rem; color: #cbd5e1; line-height: 1.6; margin-bottom: 14px;">
+            • <strong>雙雄領跑</strong>：培正中學（29人）在物理創客與STEAM一枝獨秀；濠江中學（28人）在文史、化學奧賽與英才幼教全面壓陣。<br>
+            • <strong>特色突圍</strong>：蔡高中學深耕陶藝合唱美育；鏡平學校專精IOI資訊奧林匹克；勞校以物理創客猛班立校；教業深植歷史國情史地。
+          </div>
+          <div class="school-takeaway-box" style="border-left-color: #a855f7;">
+            <i class="fa-solid fa-lightbulb"></i> <strong>行政會決策心法：</strong> 普通學校切忌盲目在中學數理紅海與培正、濠江硬碰硬，應借鑑蔡高、商訓經驗，主攻「美育、幼小、職特、德育」特色賽道。
+          </div>
+        </div>
+      `;
+    }
+
+    // Diagnostic Competitiveness Calculator
+    function runCompetitivenessCalc() {
+      const stage = document.getElementById('calcStage') ? document.getElementById('calcStage').value : '中學';
+      const subject = document.getElementById('calcSubject') ? document.getElementById('calcSubject').value : '化學';
+      const achievement = document.getElementById('calcAchievement') ? document.getElementById('calcAchievement').value : '教青局教學設計優異獎';
+      const sector = document.getElementById('calcSector') ? document.getElementById('calcSector').value : '私立學校';
+
+      let score = 50;
+
+      // 1. Achievement Weight
+      if (achievement.includes('國際奧賽') || achievement.includes('國家級大獎')) {
+        score += 35;
+      } else if (achievement.includes('教學設計優異獎')) {
+        score += 26;
+      } else if (achievement.includes('全澳學界冠軍') || achievement.includes('省級')) {
+        score += 18;
+      } else if (achievement.includes('校本特色教材')) {
+        score += 12;
+      } else {
+        score -= 22; // 無重大成果
+      }
+
+      // 2. Stage Weight
+      if (stage === '特殊教育') score += 15;
+      else if (stage === '職業技術') score += 12;
+      else if (stage === '幼稚園') score += 10;
+      else if (stage === '小學') score += 8;
+      else if (stage === '回歸教育') score += 8;
+      else score += 0; // 中學紅海
+
+      // 3. Subject Trend Weight (Edition 12 Forecast)
+      if (subject === '化學') score += 14; // 週期補償爆發
+      else if (subject === '資訊科技/STEAM') score += 11; // AI風口
+      else if (subject === '歷史/國情') score += 9;
+      else if (subject === '幼兒綜合') score += 9;
+      else if (subject === '特教職教') score += 10;
+      else if (subject === '語文/中文') score += 5;
+      else if (subject === '外語英語') score += 5;
+      else if (subject === '品德德育') score += 6;
+      else if (subject === '體藝') score += 4;
+      else if (subject === '物理') score += 3;
+      else if (subject === '數學') score += 2;
+
+      // 4. Sector Weight
+      if (sector === '公立學校') score += 6; // 每年固定 3 名專用配額
+
+      // Clamp
+      score = Math.max(25, Math.min(98, score));
+
+      // Rating info
+      let ratingTitle = '';
+      let ratingColor = '#3b82f6';
+      let starStr = '⭐⭐⭐⭐';
+      let benchmark = '';
+      let strategyTip = '';
+
+      if (score >= 88) {
+        ratingTitle = '極高推薦・重點突圍 (勝率預估 ~85-95%)';
+        ratingColor = '#10b981';
+        starStr = '⭐⭐⭐⭐⭐';
+        benchmark = '對標案例：康玉專(化學奧賽金牌)、蔡鏢(IOI國際銀牌教練)、黃斯婷(國家級教學成果獎)。';
+        strategyTip = '該賽道成果硬朗且切中政策風口或週期補償窗口！行政會應立即成立校級「申報專班」，由文宣主筆深度介入打磨 30 頁文本與答辯演練，勝券在握。';
+      } else if (score >= 75) {
+        ratingTitle = '穩健推薦・優選賽道 (勝率預估 ~70-84%)';
+        ratingColor = '#38bdf8';
+        starStr = '⭐⭐⭐⭐';
+        benchmark = '對標案例：王世澤(小學數學組長)、林凱欣(幼兒蒙特梭利)、鍾子程(歷史史地組長)。';
+        strategyTip = '具備紮實的標誌性成果與良好政策契合度。建議專班進一步挖掘「學生生命蛻變案例」與教育家格言，並組織 2 輪專家模擬面試壓力測試。';
+      } else if (score >= 60) {
+        ratingTitle = '常規推薦・需強化材料 (勝率預估 ~50-68%)';
+        ratingColor = '#f59e0b';
+        starStr = '⭐⭐⭐';
+        benchmark = '對標案例：歷屆常規中學語文/數學骨幹教師。';
+        strategyTip = '目前成果處於常規合格線，但面臨同行同質化競爭壓力。建議提前 1 年攻堅教青局《教學設計獎勵計劃》優異獎或全澳公開課示範，補齊硬通貨指標。';
+      } else {
+        ratingTitle = '高難度紅海・需重磅成果破局 (勝率預估 <35%)';
+        ratingColor = '#ef4444';
+        starStr = '⭐⭐';
+        benchmark = '警示參照：無教青局獲獎或競賽榮譽之自薦申報。';
+        strategyTip = '缺乏客觀無爭議的外部權威標誌成果，單憑平日排課資歷極易在初審被淘汰。行政會應啟動「三年梯隊蓄水池」，指導其先攻堅各項教研大獎再行申報。';
+      }
+
+      const resBox = document.getElementById('calcResultBox');
+      if (resBox) {
+        resBox.innerHTML = `
+          <div>
+            <div class="calc-score-display">
+              <div class="calc-score-number" style="color: ${ratingColor};">${score} <span style="font-size: 1.2rem; font-weight: 500;">/ 100</span></div>
+              <div class="calc-score-label">第 12 屆申報競爭力推薦指數</div>
+              <div class="calc-rating-tag" style="color: ${ratingColor};">${ratingTitle}</div>
+              <div class="calc-stars">${starStr}</div>
+            </div>
+            <div class="calc-advice-box">
+              <strong><i class="fa-solid fa-bullseye"></i> 歷史獲獎對標：</strong> ${benchmark}<br><br>
+              <strong><i class="fa-solid fa-chess-knight"></i> 專班決策指引：</strong> ${strategyTip}
+            </div>
+          </div>
+        `;
+      }
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
       renderTable(teachersData);
 
@@ -5165,6 +5502,7 @@
   }
 
   function openPresentationByIndex(idx) {
+    initWhiteboardEngine();
     currentSlideIdx = Math.max(0, Math.min(idx, presSlides.length - 1));
     const modal = document.getElementById('presentationModal');
     modal.style.display = 'flex';
@@ -5287,22 +5625,62 @@
   }
 
   // ============================================================
+    // ============================================================
   // CANVAS DRAWING & ANNOTATION ENGINE (高精度白板批註系統)
   // ============================================================
-  const canvas = document.getElementById('annotationCanvas');
-  const ctx = canvas ? canvas.getContext('2d') : null;
+  let canvas = null;
+  let ctx = null;
+  let canvasInitialized = false;
+
+  function initWhiteboardEngine() {
+    if (canvasInitialized) return;
+    canvas = document.getElementById('annotationCanvas');
+    if (!canvas) return;
+    ctx = canvas.getContext('2d');
+    canvasInitialized = true;
+
+    // Pointer Events for Stylus / Mouse / Touch
+    canvas.addEventListener('pointerdown', (e) => {
+      if (currentTool === 'select') return;
+      isDrawing = true;
+      const pos = getCanvasCoords(e);
+      lastX = pos.x;
+      lastY = pos.y;
+      canvas.setPointerCapture(e.pointerId);
+      pushUndoState();
+      drawStroke(pos.x, pos.y);
+    });
+
+    canvas.addEventListener('pointermove', (e) => {
+      if (!isDrawing || currentTool === 'select') return;
+      const pos = getCanvasCoords(e);
+      drawStroke(pos.x, pos.y);
+      lastX = pos.x;
+      lastY = pos.y;
+    });
+
+    canvas.addEventListener('pointerup', (e) => {
+      if (!isDrawing) return;
+      isDrawing = false;
+      try { canvas.releasePointerCapture(e.pointerId); } catch(err) {}
+    });
+
+    canvas.addEventListener('pointercancel', () => {
+      isDrawing = false;
+    });
+  }
 
   function initCanvasSize() {
+    initWhiteboardEngine();
     const viewport = document.getElementById('presViewport');
-    if (!viewport || !canvas) return;
+    if (!viewport || !canvas || !ctx) return;
 
     const rect = viewport.getBoundingClientRect();
     const dpr = window.devicePixelRatio || 1;
 
-    // Save existing image before resize if already initialized
     let tempImg = null;
     if (canvas.width > 0 && canvas.height > 0) {
-      tempImg = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      try { tempImg = ctx.getImageData(0, 0, canvas.width, canvas.height); } catch(e) {}
     }
 
     canvas.width = rect.width * dpr;
@@ -5315,31 +5693,35 @@
     ctx.lineJoin = 'round';
 
     if (tempImg) {
-      ctx.putImageData(tempImg, 0, 0);
+      try { ctx.putImageData(tempImg, 0, 0); } catch(e) {}
     }
   }
 
   window.addEventListener('resize', () => {
-    if (document.getElementById('presentationModal').style.display === 'flex') {
+    const modal = document.getElementById('presentationModal');
+    if (modal && modal.style.display === 'flex') {
       initCanvasSize();
     }
   });
 
   function setTool(tool) {
     currentTool = tool;
-    
-    // Update toolbar buttons
-    document.getElementById('btnToolSelect').classList.toggle('active', tool === 'select');
-    document.getElementById('btnToolPen').classList.toggle('active', tool === 'pen');
-    document.getElementById('btnToolHighlighter').classList.toggle('active', tool === 'highlighter');
-    document.getElementById('btnToolEraser').classList.toggle('active', tool === 'eraser');
+    const btnSelect = document.getElementById('btnToolSelect');
+    const btnPen = document.getElementById('btnToolPen');
+    const btnHighlighter = document.getElementById('btnToolHighlighter');
+    const btnEraser = document.getElementById('btnToolEraser');
+    if (btnSelect) btnSelect.classList.toggle('active', tool === 'select');
+    if (btnPen) btnPen.classList.toggle('active', tool === 'pen');
+    if (btnHighlighter) btnHighlighter.classList.toggle('active', tool === 'highlighter');
+    if (btnEraser) btnEraser.classList.toggle('active', tool === 'eraser');
 
-    // Update canvas interaction mode
-    canvas.classList.remove('active-pen', 'active-eraser');
-    if (tool === 'pen' || tool === 'highlighter') {
-      canvas.classList.add('active-pen');
-    } else if (tool === 'eraser') {
-      canvas.classList.add('active-eraser');
+    if (canvas) {
+      canvas.classList.remove('active-pen', 'active-eraser');
+      if (tool === 'pen' || tool === 'highlighter') {
+        canvas.classList.add('active-pen');
+      } else if (tool === 'eraser') {
+        canvas.classList.add('active-eraser');
+      }
     }
   }
 
@@ -5348,7 +5730,6 @@
     document.querySelectorAll('.color-dot').forEach(d => d.classList.remove('active'));
     if (dotEl) dotEl.classList.add('active');
 
-    // Automatically switch to pen if select or eraser was active
     if (currentTool === 'select' || currentTool === 'eraser') {
       setTool('pen');
     }
@@ -5359,46 +5740,13 @@
   }
 
   function getCanvasCoords(e) {
+    if (!canvas) return { x: 0, y: 0 };
     const rect = canvas.getBoundingClientRect();
     return {
       x: e.clientX - rect.left,
       y: e.clientY - rect.top
     };
   }
-
-  // Pointer Events for Stylus / Mouse / Touch
-  canvas.addEventListener('pointerdown', (e) => {
-    if (currentTool === 'select') return;
-    isDrawing = true;
-    const pos = getCanvasCoords(e);
-    lastX = pos.x;
-    lastY = pos.y;
-    canvas.setPointerCapture(e.pointerId);
-
-    // Save state for undo before starting this stroke
-    pushUndoState();
-
-    // Draw single point for dotting
-    drawStroke(pos.x, pos.y);
-  });
-
-  canvas.addEventListener('pointermove', (e) => {
-    if (!isDrawing || currentTool === 'select') return;
-    const pos = getCanvasCoords(e);
-    drawStroke(pos.x, pos.y);
-    lastX = pos.x;
-    lastY = pos.y;
-  });
-
-  canvas.addEventListener('pointerup', (e) => {
-    if (!isDrawing) return;
-    isDrawing = false;
-    canvas.releasePointerCapture(e.pointerId);
-  });
-
-  canvas.addEventListener('pointercancel', () => {
-    isDrawing = false;
-  });
 
   function drawStroke(x, y) {
     ctx.beginPath();
@@ -5494,326 +5842,7 @@
 
   
 
-    // ============================================================
-    // RADAR CHART & PREDICTION CALCULATOR SUPPORT FUNCTIONS
-    // ============================================================
-    const radarSchoolData = {
-      '培正中學': {
-        name: '培正中學',
-        total: 29,
-        share: '17.0%',
-        color: '#3b82f6',
-        bg: 'rgba(59, 130, 246, 0.2)',
-        metrics: [9, 5, 6, 5, 8, 1],
-        dna: '全澳科普創客發源地・國際奧賽金牌體系・幼小創思孵化器',
-        topTeachers: '劉冠華(物理水底機器人)、梁沛津(物理理論)、閔好年(幼小創思)、李振邦(STEAM)',
-        insight: '培正具備全澳最成熟的「校企科研—指導大賽—著述出版」流水線，在物理創客與幼小創思兩大極端賽道形成強大雙輪驅動。'
-      },
-      '濠江中學': {
-        name: '濠江中學',
-        total: 28,
-        share: '16.4%',
-        color: '#ef4444',
-        bg: 'rgba(239, 68, 68, 0.2)',
-        metrics: [6, 4, 9, 4, 8, 1],
-        dna: '愛國愛澳人文重鎮・數理競賽強校・五育藝體與英才幼教',
-        topTeachers: '康玉專(化學奧賽)、王世澤(小學數學)、陳玉潔(初中語文)、李守球(化學)',
-        insight: '濠江在人文歷史與語文領域佔據絕對壓倒性優勢（9人獲獎），結合英才分校小幼高階教研，形成全方位無死角的申報矩陣。'
-      },
-      '聖公會(澳門)蔡高中學': {
-        name: '聖公會(澳門)蔡高中學',
-        total: 14,
-        share: '8.2%',
-        color: '#10b981',
-        bg: 'rgba(16, 185, 129, 0.2)',
-        metrics: [2, 2, 3, 4, 2, 2],
-        dna: '五育美育特色突圍・生命品德關懷・陶藝合唱與高中數學',
-        topTeachers: '王宏(視覺藝術陶藝)、胡俊明(高中數學)、夏麗珠(生命教育)、鄭慧蘭(合唱美育)',
-        insight: '蔡高巧妙避開與培正/濠江在數理創客的正面火拼，以視覺陶藝、合唱藝術及生命關懷走出極具特色的高質量突圍之路。'
-      },
-      '鏡平學校': {
-        name: '鏡平學校',
-        total: 12,
-        share: '7.0%',
-        color: '#f59e0b',
-        bg: 'rgba(245, 158, 11, 0.2)',
-        metrics: [6, 1, 1, 2, 2, 1],
-        dna: 'STREAM科技與IOI資訊奧賽・理化生科組拔尖・資深幼教',
-        topTeachers: '蔡鏢(國際資訊奧賽IOI金牌教練)、杜正玲(幼兒教育)、董淑珍(數學科組長)',
-        insight: '鏡平聚焦 STREAM 創科與國際資訊奧林匹克競賽，在電腦軟體與物聯網賽道累積了全澳公認的權威成果。'
-      },
-      '勞校中學': {
-        name: '勞校中學',
-        total: 9,
-        share: '5.3%',
-        color: '#8b5cf6',
-        bg: 'rgba(139, 92, 246, 0.2)',
-        metrics: [2, 1, 2, 2, 2, 0],
-        dna: '物理創客猛班體系・文史寫作傳承・全學段均衡發展',
-        topTeachers: '林俊猛(物理創客與猛班體系)、郭桂豪(中學歷史)、方艷嫦(語文寫作)',
-        insight: '勞校以「物理創客猛班」作為標誌性金字招牌，帶動文史、藝術與小學各學段骨幹協同突圍，品牌辨識度極高。'
-      },
-      '教業中學': {
-        name: '教業中學',
-        total: 9,
-        share: '5.3%',
-        color: '#06b6d4',
-        bg: 'rgba(6, 182, 212, 0.2)',
-        metrics: [3, 1, 3, 1, 1, 0],
-        dna: '史地國情教學高地・初小語文教改・機器人創客與排球',
-        topTeachers: '鍾子程(歷史史地組)、施虹冰(初中語文組長)、陳唯健(體育排球)',
-        insight: '教業深耕歷史國情教育，以《百年傳承》等校本教材為載體，結合語文名師引領與機器人競賽，展現文理兼備優勢。'
-      }
-    };
-
-    let radarChartInstance = null;
-    const radarDimensions = ['STEM創科', '數理奧賽', '人文文史', '五育藝體', '幼小教研', '全人德育/特教'];
-
-    function initRadarChart() {
-      const ctx = document.getElementById('radarChart');
-      if (!ctx) return;
-      
-      const defaultSchool = radarSchoolData['培正中學'];
-      radarChartInstance = new Chart(ctx, {
-        type: 'radar',
-        data: {
-          labels: radarDimensions,
-          datasets: [{
-            label: defaultSchool.name,
-            data: defaultSchool.metrics,
-            borderColor: defaultSchool.color,
-            backgroundColor: defaultSchool.bg,
-            borderWidth: 2.5,
-            pointBackgroundColor: defaultSchool.color,
-            pointBorderColor: '#fff',
-            pointHoverBackgroundColor: '#fff',
-            pointHoverBorderColor: defaultSchool.color,
-            pointRadius: 4
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: {
-              labels: { color: '#cbd5e1', font: { size: 11 } }
-            }
-          },
-          scales: {
-            r: {
-              angleLines: { color: 'rgba(255, 255, 255, 0.12)' },
-              grid: { color: 'rgba(255, 255, 255, 0.08)' },
-              pointLabels: {
-                color: '#f8fafc',
-                font: { size: 11, weight: '600' }
-              },
-              ticks: {
-                backdropColor: 'transparent',
-                color: '#94a3b8',
-                stepSize: 2,
-                font: { size: 9 }
-              },
-              suggestedMin: 0,
-              suggestedMax: 10
-            }
-          }
-        }
-      });
-      renderRadarSchoolInfo('培正中學');
-    }
-
-    function switchRadarSchool(schoolKey, btnEl) {
-      if (btnEl) {
-        document.querySelectorAll('.radar-btn').forEach(b => b.classList.remove('active'));
-        btnEl.classList.add('active');
-      }
-
-      if (!radarChartInstance) return;
-
-      if (schoolKey === 'ALL') {
-        radarChartInstance.data.datasets = Object.keys(radarSchoolData).map(k => {
-          const s = radarSchoolData[k];
-          return {
-            label: s.name,
-            data: s.metrics,
-            borderColor: s.color,
-            backgroundColor: s.bg,
-            borderWidth: 1.8,
-            pointRadius: 2.5
-          };
-        });
-        radarChartInstance.update();
-        renderRadarAllSchoolsInfo();
-      } else {
-        const s = radarSchoolData[schoolKey];
-        if (!s) return;
-        radarChartInstance.data.datasets = [{
-          label: s.name,
-          data: s.metrics,
-          borderColor: s.color,
-          backgroundColor: s.bg,
-          borderWidth: 2.5,
-          pointBackgroundColor: s.color,
-          pointBorderColor: '#fff',
-          pointRadius: 4
-        }];
-        radarChartInstance.update();
-        renderRadarSchoolInfo(schoolKey);
-      }
-    }
-
-    function renderRadarSchoolInfo(schoolKey) {
-      const s = radarSchoolData[schoolKey];
-      const panel = document.getElementById('radarSchoolAnalysis');
-      if (!panel || !s) return;
-
-      panel.innerHTML = `
-        <div>
-          <span class="school-profile-badge">全澳名校畫像 No. 1 ~ 6</span>
-          <div class="school-profile-title">${s.name}</div>
-          <div class="school-profile-dna"><i class="fa-solid fa-dna"></i> ${s.dna}</div>
-          
-          <div class="school-metrics-list">
-            <div class="school-metric-item"><span>歷屆累計獲獎</span><strong>${s.total} 人 (${s.share})</strong></div>
-            <div class="school-metric-item"><span>STEM創科成果</span><strong>${s.metrics[0]} 人</strong></div>
-            <div class="school-metric-item"><span>數理奧賽成果</span><strong>${s.metrics[1]} 人</strong></div>
-            <div class="school-metric-item"><span>人文文史著述</span><strong>${s.metrics[2]} 人</strong></div>
-            <div class="school-metric-item"><span>五育美藝體育</span><strong>${s.metrics[3]} 人</strong></div>
-            <div class="school-metric-item"><span>幼小基礎教研</span><strong>${s.metrics[4]} 人</strong></div>
-          </div>
-
-          <div style="font-size:0.82rem; color:#94a3b8; margin-bottom:10px;">
-            <strong style="color:#e2e8f0;"><i class="fa-solid fa-award"></i> 代表性標誌名師：</strong> ${s.topTeachers}
-          </div>
-
-          <div class="school-takeaway-box">
-            <i class="fa-solid fa-chess-knight"></i> <strong>行政會戰略啟示：</strong> ${s.insight}
-          </div>
-        </div>
-      `;
-    }
-
-    function renderRadarAllSchoolsInfo() {
-      const panel = document.getElementById('radarSchoolAnalysis');
-      if (!panel) return;
-      panel.innerHTML = `
-        <div>
-          <span class="school-profile-badge" style="background: #7c3aed;">全澳六強綜合透視</span>
-          <div class="school-profile-title">TOP 6 名校競爭優勢綜合對比</div>
-          <div class="school-profile-dna"><i class="fa-solid fa-chart-line"></i> 兩大巨頭(培正/濠江)強佔33.3% + 中堅四強鼎立</div>
-          <div style="font-size: 0.85rem; color: #cbd5e1; line-height: 1.6; margin-bottom: 14px;">
-            • <strong>雙雄領跑</strong>：培正中學（29人）在物理創客與STEAM一枝獨秀；濠江中學（28人）在文史、化學奧賽與英才幼教全面壓陣。<br>
-            • <strong>特色突圍</strong>：蔡高中學深耕陶藝合唱美育；鏡平學校專精IOI資訊奧林匹克；勞校以物理創客猛班立校；教業深植歷史國情史地。
-          </div>
-          <div class="school-takeaway-box" style="border-left-color: #a855f7;">
-            <i class="fa-solid fa-lightbulb"></i> <strong>行政會決策心法：</strong> 普通學校切忌盲目在中學數理紅海與培正、濠江硬碰硬，應借鑑蔡高、商訓經驗，主攻「美育、幼小、職特、德育」特色賽道。
-          </div>
-        </div>
-      `;
-    }
-
-    // Diagnostic Competitiveness Calculator
-    function runCompetitivenessCalc() {
-      const stage = document.getElementById('calcStage') ? document.getElementById('calcStage').value : '中學';
-      const subject = document.getElementById('calcSubject') ? document.getElementById('calcSubject').value : '化學';
-      const achievement = document.getElementById('calcAchievement') ? document.getElementById('calcAchievement').value : '教青局教學設計優異獎';
-      const sector = document.getElementById('calcSector') ? document.getElementById('calcSector').value : '私立學校';
-
-      let score = 50;
-
-      // 1. Achievement Weight
-      if (achievement.includes('國際奧賽') || achievement.includes('國家級大獎')) {
-        score += 35;
-      } else if (achievement.includes('教學設計優異獎')) {
-        score += 26;
-      } else if (achievement.includes('全澳學界冠軍') || achievement.includes('省級')) {
-        score += 18;
-      } else if (achievement.includes('校本特色教材')) {
-        score += 12;
-      } else {
-        score -= 22; // 無重大成果
-      }
-
-      // 2. Stage Weight
-      if (stage === '特殊教育') score += 15;
-      else if (stage === '職業技術') score += 12;
-      else if (stage === '幼稚園') score += 10;
-      else if (stage === '小學') score += 8;
-      else if (stage === '回歸教育') score += 8;
-      else score += 0; // 中學紅海
-
-      // 3. Subject Trend Weight (Edition 12 Forecast)
-      if (subject === '化學') score += 14; // 週期補償爆發
-      else if (subject === '資訊科技/STEAM') score += 11; // AI風口
-      else if (subject === '歷史/國情') score += 9;
-      else if (subject === '幼兒綜合') score += 9;
-      else if (subject === '特教職教') score += 10;
-      else if (subject === '語文/中文') score += 5;
-      else if (subject === '外語英語') score += 5;
-      else if (subject === '品德德育') score += 6;
-      else if (subject === '體藝') score += 4;
-      else if (subject === '物理') score += 3;
-      else if (subject === '數學') score += 2;
-
-      // 4. Sector Weight
-      if (sector === '公立學校') score += 6; // 每年固定 3 名專用配額
-
-      // Clamp
-      score = Math.max(25, Math.min(98, score));
-
-      // Rating info
-      let ratingTitle = '';
-      let ratingColor = '#3b82f6';
-      let starStr = '⭐⭐⭐⭐';
-      let benchmark = '';
-      let strategyTip = '';
-
-      if (score >= 88) {
-        ratingTitle = '極高推薦・重點突圍 (勝率預估 ~85-95%)';
-        ratingColor = '#10b981';
-        starStr = '⭐⭐⭐⭐⭐';
-        benchmark = '對標案例：康玉專(化學奧賽金牌)、蔡鏢(IOI國際銀牌教練)、黃斯婷(國家級教學成果獎)。';
-        strategyTip = '該賽道成果硬朗且切中政策風口或週期補償窗口！行政會應立即成立校級「申報專班」，由文宣主筆深度介入打磨 30 頁文本與答辯演練，勝券在握。';
-      } else if (score >= 75) {
-        ratingTitle = '穩健推薦・優選賽道 (勝率預估 ~70-84%)';
-        ratingColor = '#38bdf8';
-        starStr = '⭐⭐⭐⭐';
-        benchmark = '對標案例：王世澤(小學數學組長)、林凱欣(幼兒蒙特梭利)、鍾子程(歷史史地組長)。';
-        strategyTip = '具備紮實的標誌性成果與良好政策契合度。建議專班進一步挖掘「學生生命蛻變案例」與教育家格言，並組織 2 輪專家模擬面試壓力測試。';
-      } else if (score >= 60) {
-        ratingTitle = '常規推薦・需強化材料 (勝率預估 ~50-68%)';
-        ratingColor = '#f59e0b';
-        starStr = '⭐⭐⭐';
-        benchmark = '對標案例：歷屆常規中學語文/數學骨幹教師。';
-        strategyTip = '目前成果處於常規合格線，但面臨同行同質化競爭壓力。建議提前 1 年攻堅教青局《教學設計獎勵計劃》優異獎或全澳公開課示範，補齊硬通貨指標。';
-      } else {
-        ratingTitle = '高難度紅海・需重磅成果破局 (勝率預估 <35%)';
-        ratingColor = '#ef4444';
-        starStr = '⭐⭐';
-        benchmark = '警示參照：無教青局獲獎或競賽榮譽之自薦申報。';
-        strategyTip = '缺乏客觀無爭議的外部權威標誌成果，單憑平日排課資歷極易在初審被淘汰。行政會應啟動「三年梯隊蓄水池」，指導其先攻堅各項教研大獎再行申報。';
-      }
-
-      const resBox = document.getElementById('calcResultBox');
-      if (resBox) {
-        resBox.innerHTML = `
-          <div>
-            <div class="calc-score-display">
-              <div class="calc-score-number" style="color: ${ratingColor};">${score} <span style="font-size: 1.2rem; font-weight: 500;">/ 100</span></div>
-              <div class="calc-score-label">第 12 屆申報競爭力推薦指數</div>
-              <div class="calc-rating-tag" style="color: ${ratingColor};">${ratingTitle}</div>
-              <div class="calc-stars">${starStr}</div>
-            </div>
-            <div class="calc-advice-box">
-              <strong><i class="fa-solid fa-bullseye"></i> 歷史獲獎對標：</strong> ${benchmark}<br><br>
-              <strong><i class="fa-solid fa-chess-knight"></i> 專班決策指引：</strong> ${strategyTip}
-            </div>
-          </div>
-        `;
-      }
-    }
-
-</script>
+    </script>
 
   <!-- ============================================================
        FULLSCREEN PRESENTATION & WHITEBOARD ANNOTATION MODAL
