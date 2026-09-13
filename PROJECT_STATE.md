@@ -47,16 +47,16 @@
 
 ## 跨電腦交接日誌 (Session Handover Logs)
 
-### 📅 [2026-09-13 10:15] 數據分析與預測擴展交接記錄 (Option A Completed)
-- **本次完成重點**：
-  1. 修復 `index.html` 第 8 行 `<script src="chart.js">` 標籤吞沒重複代碼之歷史遺留問題，清理 600 行冗餘，DOM 樹 100% 規範乾淨。
-  2. 構建並渲染「三大發展時期學科佔比動態演進圖 (`eraChart`)」，清晰揭示語文持續攀升、歷史近期爆發、STEAM翻倍、以及化學近期零獲獎的週期補償窗口。
-  3. 構建「各學段主要學科交叉結構穿透圖 (`stageCrossChart`)」，穿透中學、小學、幼教、回歸教育的優勢賽道佈局。
-  4. 研發「全澳 TOP 6 名校六維核心競爭力雷達圖 (`radarChart`)」，支援培正、濠江、蔡高、鏡平、勞校、教業單校畫像切換與六校綜合對比，並配備動態戰略啟示面板。
-  5. 打造「第 12 屆評審名額與賽道趨勢預測看板」，解析私校 15 + 公立 3 雙軌制、極高潛力賽道與藍海冷門高勝率賽道。
-  6. 研發「申報勝率與競爭力診斷模擬器 (`runCompetitivenessCalc`)」，輸入學段、學科、成果與體系，即時演算推薦指數、對標名師與專班決策指引。
-  7. 同步更新 `README.md` 與 `澳門卓越表現教師歷屆獲獎大數據統計與行政會參照本.md`。
-- **保留進度 / 未解卡點**：代碼經 Node.js 語法校驗完全通過，工作區健康乾淨。
+### 📅 [2026-09-13 15:35] 雷達圖顯示問題排查與修復 (Bug Fix)
+- **問題根因**：
+  1. 演講白板 Canvas 元素（`#annotationCanvas`）位於頁面底部的 Modal 結構中，原腳本在頂層加載時直接對其綁定 `addEventListener`，導致拋出 `Cannot read properties of null (reading 'addEventListener')` 的未捕獲異常，中斷了後續代碼執行。
+  2. 雷達圖資料與函數宣告原先放置於演講腳本之後，因上述異常導致 `radarSchoolData` 變量未初始化，進而使 `initRadarChart()` 拋出 `ReferenceError`，阻斷了雷達圖及勝率診斷器的渲染。
+  3. CSS 層疊樣式中，全域 `.chart-card` 的白色背景覆蓋了雷達圖的暗色設定，導致視覺對比度異常。
+- **修復措施**：
+  1. 將白板 Canvas 繪圖引擎事件監聽封裝為 `initWhiteboardEngine()`，實施惰性安全初始化與防禦性空指針檢查。
+  2. 將雷達圖資料定義、學校切換邏輯與診斷模擬器前移至 `DOMContentLoaded` 之前，確保完全獨立且最先加載。
+  3. 強化 `.radar-chart-card` 與 `.advanced-analytics-section .chart-card` 的 CSS 特異性（Specificity），保持高質感暗色風格一致。
+  4. 透過 Chrome Headless 自動化測試與 DOM 檢測，驗證 Canvas 0~6 全部成功掛載並正常繪製。
+- **保留進度 / 未解卡點**：無任何卡點，代碼已推送到 GitHub main 分支（Commit: `f76f878`）。
 - **下次開工建議入口**：
   - 開啟 GitHub Pages 網址驗證實機體驗：https://jtchen1225-a11y.github.io/macau-distinguished-teachers/
-  - 可進一步根據行政會反饋，增加演講投影片頁面或 PDF 列印匯出優化。
