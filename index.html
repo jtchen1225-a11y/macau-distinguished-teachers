@@ -4877,7 +4877,7 @@
       `;
     }
 
-    // Diagnostic Competitiveness Calculator
+    // Diagnostic Competitiveness Calculator (全動態歷史對標與專班決策系統)
     function runCompetitivenessCalc() {
       const stage = document.getElementById('calcStage') ? document.getElementById('calcStage').value : '中學';
       const subject = document.getElementById('calcSubject') ? document.getElementById('calcSubject').value : '化學';
@@ -4896,7 +4896,7 @@
       } else if (achievement.includes('校本特色教材')) {
         score += 12;
       } else {
-        score -= 22; // 無重大成果
+        score -= 22; // 無重大外部標誌成果
       }
 
       // 2. Stage Weight
@@ -4905,7 +4905,7 @@
       else if (stage === '幼稚園') score += 10;
       else if (stage === '小學') score += 8;
       else if (stage === '回歸教育') score += 8;
-      else score += 0; // 中學紅海
+      else score += 0; // 中學大盤
 
       // 3. Subject Trend Weight (Edition 12 Forecast)
       if (subject === '化學') score += 14; // 週期補償爆發
@@ -4921,7 +4921,7 @@
       else if (subject === '數學') score += 2;
 
       // 4. Sector Weight
-      if (sector === '公立學校') score += 6; // 每年固定 3 名專用配額
+      if (sector === '公立學校') score += 6; // 每年固定 3 名專屬配額
 
       // Clamp
       score = Math.max(25, Math.min(98, score));
@@ -4930,34 +4930,167 @@
       let ratingTitle = '';
       let ratingColor = '#3b82f6';
       let starStr = '⭐⭐⭐⭐';
-      let benchmark = '';
-      let strategyTip = '';
 
       if (score >= 88) {
         ratingTitle = '極高推薦・重點突圍 (勝率預估 ~85-95%)';
         ratingColor = '#10b981';
         starStr = '⭐⭐⭐⭐⭐';
-        benchmark = '對標案例：康玉專(化學奧賽金牌)、蔡鏢(IOI國際銀牌教練)、黃斯婷(國家級教學成果獎)。';
-        strategyTip = '該賽道成果硬朗且切中政策風口或週期補償窗口！行政會應立即成立校級「申報專班」，由文宣主筆深度介入打磨 30 頁文本與答辯演練，勝券在握。';
       } else if (score >= 75) {
         ratingTitle = '穩健推薦・優選賽道 (勝率預估 ~70-84%)';
         ratingColor = '#38bdf8';
         starStr = '⭐⭐⭐⭐';
-        benchmark = '對標案例：王世澤(小學數學組長)、林凱欣(幼兒蒙特梭利)、鍾子程(歷史史地組長)。';
-        strategyTip = '具備紮實的標誌性成果與良好政策契合度。建議專班進一步挖掘「學生生命蛻變案例」與教育家格言，並組織 2 輪專家模擬面試壓力測試。';
       } else if (score >= 60) {
         ratingTitle = '常規推薦・需強化材料 (勝率預估 ~50-68%)';
         ratingColor = '#f59e0b';
         starStr = '⭐⭐⭐';
-        benchmark = '對標案例：歷屆常規中學語文/數學骨幹教師。';
-        strategyTip = '目前成果處於常規合格線，但面臨同行同質化競爭壓力。建議提前 1 年攻堅教青局《教學設計獎勵計劃》優異獎或全澳公開課示範，補齊硬通貨指標。';
       } else {
         ratingTitle = '高難度紅海・需重磅成果破局 (勝率預估 <35%)';
         ratingColor = '#ef4444';
         starStr = '⭐⭐';
-        benchmark = '警示參照：無教青局獲獎或競賽榮譽之自薦申報。';
-        strategyTip = '缺乏客觀無爭議的外部權威標誌成果，單憑平日排課資歷極易在初審被淘汰。行政會應啟動「三年梯隊蓄水池」，指導其先攻堅各項教研大獎再行申報。';
       }
+
+      // ============================================================
+      // DYNAMIC HISTORICAL BENCHMARKS (依據學段與學科動態過濾 171 人庫)
+      // ============================================================
+      let matchedTeachers = teachersData.filter(t => {
+        let stMatch = false;
+        const stNorm = t.stage_norm || '';
+        const tStage = t.stage || '';
+        if (stage === '全部') stMatch = true;
+        else if (stage === '中學') stMatch = stNorm === '中學' || tStage.includes('中學') || tStage.includes('高中') || tStage.includes('初中');
+        else if (stage === '小學') stMatch = stNorm === '小學' || tStage.includes('小學');
+        else if (stage === '幼稚園') stMatch = stNorm === '幼稚園' || tStage.includes('幼');
+        else if (stage === '特殊教育') stMatch = stNorm === '特教/融合' || (t.subject && (t.subject.includes('特教') || t.subject.includes('融合')));
+        else if (stage === '職業技術') stMatch = stNorm === '職業技術' || t.school.includes('職') || (t.subject && t.subject.includes('職'));
+        else if (stage === '回歸教育') stMatch = stNorm === '回歸教育' || t.school.includes('商訓') || t.school.includes('夜中學');
+        else stMatch = stNorm.includes(stage) || tStage.includes(stage);
+
+        let subMatch = false;
+        const cat = t.subject_cat || '';
+        const sub = t.subject || '';
+        if (subject === '化學') subMatch = cat.includes('化學') || sub.includes('化學');
+        else if (subject === '資訊科技/STEAM') subMatch = cat.includes('資訊') || cat.includes('STEAM') || sub.includes('電腦') || sub.includes('科技') || sub.includes('機器人') || sub.includes('STEAM');
+        else if (subject === '語文/中文') subMatch = cat.includes('語文') || cat.includes('中文') || sub.includes('語文') || sub.includes('中文') || sub.includes('寫作') || sub.includes('閱讀');
+        else if (subject === '歷史/國情') subMatch = cat.includes('歷史') || sub.includes('歷史') || sub.includes('史地') || sub.includes('國情');
+        else if (subject === '數學') subMatch = cat.includes('數學') || sub.includes('數學') || sub.includes('奧數');
+        else if (subject === '物理') subMatch = cat.includes('物理') || sub.includes('物理') || sub.includes('創客');
+        else if (subject === '體藝') subMatch = cat.includes('體育') || cat.includes('藝術') || sub.includes('體育') || sub.includes('美術') || sub.includes('視藝') || sub.includes('音樂') || sub.includes('舞蹈') || sub.includes('陶藝');
+        else if (subject === '幼兒綜合') subMatch = cat.includes('幼兒') || sub.includes('幼兒') || sub.includes('蒙特梭利') || sub.includes('感統');
+        else if (subject === '特教職教') subMatch = cat.includes('融合') || cat.includes('特教') || cat.includes('職業') || sub.includes('特教') || sub.includes('融合') || sub.includes('健康照顧');
+        else if (subject === '品德德育') subMatch = cat.includes('德育') || cat.includes('公民') || sub.includes('品德') || sub.includes('公民') || sub.includes('生命教育') || sub.includes('生涯規劃');
+        else if (subject === '外語英語') subMatch = cat.includes('英語') || cat.includes('外語') || cat.includes('葡語') || sub.includes('英語') || sub.includes('英文') || sub.includes('葡語');
+
+        return stMatch && subMatch;
+      });
+
+      let benchmarkHtml = '';
+      if (matchedTeachers.length > 0) {
+        const topList = matchedTeachers.slice(0, 4).map(t => {
+          let feat = t.verification_source ? t.verification_source.replace('官方特刊特寫: ', '').substring(0, 24) : t.subject;
+          return `<div style="margin-bottom: 5px; padding-left: 8px; border-left: 2px solid #3b82f6;">
+            <strong>第${t.edition}屆・${t.name}</strong> (${t.school}・${t.subject})
+            <span style="color: #94a3b8; font-size: 0.8rem; display: block;">標籤：${feat}</span>
+          </div>`;
+        }).join('');
+
+        benchmarkHtml = `
+          <div style="margin-top: 4px; font-size: 0.85rem; color: #cbd5e1;">
+            <span style="color: #60a5fa; font-weight: 700;">歷屆【${stage}・${subject}】獲獎對標 (${matchedTeachers.length} 位名師)：</span>
+            <div style="margin-top: 6px;">${topList}</div>
+            ${matchedTeachers.length > 4 ? `<span style="color: #94a3b8; font-size: 0.78rem;">...等共 ${matchedTeachers.length} 位獲獎名師（完整名單請查閱下方總表）</span>` : ''}
+          </div>
+        `;
+      } else {
+        // Fallback: Show all teachers of this subject across Macao
+        let crossStageTeachers = teachersData.filter(t => {
+          const cat = t.subject_cat || '';
+          const sub = t.subject || '';
+          if (subject === '化學') return cat.includes('化學') || sub.includes('化學');
+          if (subject === '資訊科技/STEAM') return cat.includes('資訊') || cat.includes('STEAM') || sub.includes('科技') || sub.includes('機器人');
+          if (subject === '語文/中文') return cat.includes('語文') || cat.includes('中文');
+          if (subject === '歷史/國情') return cat.includes('歷史');
+          if (subject === '數學') return cat.includes('數學');
+          if (subject === '物理') return cat.includes('物理');
+          if (subject === '體藝') return cat.includes('體育') || cat.includes('藝術');
+          if (subject === '幼兒綜合') return cat.includes('幼兒');
+          if (subject === '特教職教') return cat.includes('融合') || cat.includes('特教') || cat.includes('職業');
+          if (subject === '品德德育') return cat.includes('德育') || cat.includes('公民');
+          if (subject === '外語英語') return cat.includes('英語') || cat.includes('葡語');
+          return false;
+        }).slice(0, 3);
+
+        const crossList = crossStageTeachers.map(t => `<strong>第${t.edition}屆・${t.name}</strong> (${t.school}・${t.subject})`).join('、');
+
+        benchmarkHtml = `
+          <div style="margin-top: 4px; font-size: 0.85rem; color: #cbd5e1;">
+            <div style="background: rgba(234, 179, 8, 0.15); border: 1px solid rgba(234, 179, 8, 0.3); padding: 8px 10px; border-radius: 6px; margin-bottom: 6px; font-size: 0.82rem; color: #fef08a;">
+              <i class="fa-solid fa-lightbulb"></i> <strong>首創賽道破局提醒：</strong>歷屆【${stage}】學段尚無單純該專科之獲獎紀錄（小學/幼教常以跨學科科普常識或感統遊戲整合）。若貴校在此學段申報，極具<strong>全澳首創破局示範意義</strong>！
+            </div>
+            <span style="color: #60a5fa; font-weight: 700;">全澳同領域標杆名師參考：</span> ${crossList || '歷屆該領域名師'}
+          </div>
+        `;
+      }
+
+      // ============================================================
+      // DYNAMIC TAILORED STRATEGY ADVICE (依據所有選項全動態生成指引)
+      // ============================================================
+      let tips = [];
+
+      // 1. Subject specific advice
+      if (subject === '化學') {
+        tips.push('<strong>【化學週期補償】</strong>第11屆全澳化學科斷層零獲獎，迎來歷史最強補償窗口！行政會應優先為化學骨幹組建專班，主攻「綠色微型實驗、化學奧賽或生活化驗證教法」，突圍機率極高。');
+      } else if (subject === '資訊科技/STEAM') {
+        tips.push('<strong>【政策最強風口】</strong>契合特區「智慧校園」與國家 AI 科技戰略，專班應強化「生成式 AI 輔助教學、無人機/低空創客、物聯網程式開發或國際/全國科創大賽奪獎鏈條」。');
+      } else if (subject === '歷史/國情') {
+        tips.push('<strong>【人文國情高位】</strong>近三屆歷史科佔比飆升至 13.7%！評審極度看重家國情懷。專班應借鑑教業《百年傳承》經驗，凸顯愛國愛澳精神與學生史學思辨素養。');
+      } else if (subject === '語文/中文') {
+        tips.push('<strong>【語文第一大科】</strong>歷屆累積 26 位名師獲獎，但常規排課競爭白熱化。材料必須跳脫日常課表，主打「整本書跨學科閱讀、思辨式寫作工作坊、或特級內師指導引領」。');
+      } else if (subject === '數學') {
+        tips.push('<strong>【數理奧賽突圍】</strong>數學早期佔比極高，近年趨於平台期。純常規數學同質化嚴重，專班應側重「IMO奧數金牌帶教、編程數學跨界結合、或分層遞進培優輔差獨門教法」。');
+      } else if (subject === '物理') {
+        tips.push('<strong>【科普硬核創新】</strong>物理科曾誕生劉冠華水下機器人、林俊猛猛班等標誌性名師。專班應重點展示「校本創客發明專利、理論科普深耕、或指導學生參加全國大賽實錄」。');
+      } else if (subject === '體藝') {
+        tips.push('<strong>【五育美育特色】</strong>體育與藝術美育席位穩定。借鑑蔡高陶藝合唱與培正排球經驗，必須有「學界錦標賽總冠軍、全國合唱/舞蹈最高獎或國家級教學成果獎」作客觀支撐。');
+      } else if (subject === '幼兒綜合') {
+        tips.push('<strong>【幼教專屬賽道】</strong>佔比穩定在 6-10%，評審專家極具情感共鳴。材料應聚焦「幼兒蒙特梭利、感統遊戲化探索、常規身教養成」，並以真摯動人的愛生細節打動評委。');
+      } else if (subject === '特教職教') {
+        tips.push('<strong>【藍海高勝率賽道】</strong>全澳候選人極度稀缺、政府政策全力扶持！專班應突出「IEP個別化轉銜支持、弱勢生社會自立成效、或產學協同校企合作大健康考證」。');
+      } else if (subject === '品德德育') {
+        tips.push('<strong>【全人德育形塑】</strong>聚焦「班級經營、全人陪伴、心靈輔導與生涯規劃」。專班應提煉具備教育家風骨的育人哲學，並附上 1-2 位迷茫學生被徹底改變命運的真實案例。');
+      } else if (subject === '外語英語') {
+        tips.push('<strong>【雙語沉浸特色】</strong>主攻「國際視野、戲劇英語、閱讀素養或中葡雙語沉浸式課堂」，強調為特區培養「一平台、一基地」多元外語人才。');
+      }
+
+      // 2. Stage specific advice
+      if (stage === '小學') {
+        tips.push('<strong>【小學學段攻堅抓手】</strong>小學評審極度看重「奠基性」與「愛生溫度」。專班應重點包裝校本閱讀特色、低中年級常規養成與資深班主任全人陪伴，避免套用中學純競賽邏輯。');
+      } else if (stage === '幼稚園') {
+        tips.push('<strong>【幼稚園專屬抓手】</strong>嚴守幼教幼兒視角，多運用高畫質微課、課堂活動照片、幼兒眼神轉變與家長真情感謝信，展現溫潤細膩的幼教大師風範。');
+      } else if (stage === '特殊教育') {
+        tips.push('<strong>【特教政策加持】</strong>特教申報直通專家心坎，行政會應全額資助出版校本特教案例集，並組織校外督導進行答辯演練，重點展現社會擔當。');
+      } else if (stage === '職業技術') {
+        tips.push('<strong>【職教大健康抓手】</strong>契合特區「1+4」多元發展，凸顯校企協同、技能競賽與專業證照獲取率。');
+      } else if (stage === '回歸教育') {
+        tips.push('<strong>【成人點燈敘事】</strong>借鑑商訓學校 9 位名師典範，材料應強調「20-30年夜間堅守、成人學員第二人生點燈、失學青少年導正」。');
+      } else if (stage === '中學') {
+        tips.push('<strong>【中學紅海攻堅】</strong>中學強手如林，材料排版必須具備「雜誌級視覺美感與數據論證鏈」，文字由文宣主筆字斟句酌，嚴守 30 頁審批紅線。');
+      }
+
+      // 3. Achievement specific advice
+      if (achievement.includes('國際奧賽') || achievement.includes('國家級大獎')) {
+        tips.push('<strong>【成果昇華重點】</strong>已具備全澳最頂尖的客觀敲門磚！專班核心在於「以故事打動人心」，將獲獎數據昇華為教師點石成金的育人哲學，預先組織 2 輪高壓答辯演練，勝券在握。');
+      } else if (achievement.includes('教學設計優異獎')) {
+        tips.push('<strong>【教青局硬通貨】</strong>榮獲教青局《教學設計獎勵計劃》優異獎是公信力最高保證。建議材料中補充展示該教案在全校或全澳的輻射推廣成效與示範課錄像。');
+      } else if (achievement.includes('常規優良教學')) {
+        tips.push('<strong>【🚨 關鍵避坑提醒】</strong>目前缺乏客觀權威大獎，單憑排課節數與平日口碑在專家初審中極易被同質化淘汰！行政會應啟動「3+3 梯隊蓄水池」，提前 1-2 年立項攻堅教青局教案大賽。');
+      }
+
+      // 4. Sector advice
+      if (sector === '公立學校') {
+        tips.push('<strong>【公立專用配額】</strong>自第 10 屆起官方設立每年 3 名公校專屬席位，競爭環境優於私校大盤！應緊扣雙語教學、公立全人照顧與特區政策示範效應申報。');
+      }
+
+      const adviceListHtml = tips.map(t => `<li style="margin-bottom: 6px; line-height: 1.45;">${t}</li>`).join('');
 
       const resBox = document.getElementById('calcResultBox');
       if (resBox) {
@@ -4970,15 +5103,20 @@
               <div class="calc-stars">${starStr}</div>
             </div>
             <div class="calc-advice-box">
-              <strong><i class="fa-solid fa-bullseye"></i> 歷史獲獎對標：</strong> ${benchmark}<br><br>
-              <strong><i class="fa-solid fa-chess-knight"></i> 專班決策指引：</strong> ${strategyTip}
+              ${benchmarkHtml}
+              <div style="margin-top: 12px; border-top: 1px dashed rgba(255,255,255,0.15); padding-top: 10px;">
+                <span style="color: #38bdf8; font-weight: 700;"><i class="fa-solid fa-chess-knight"></i> 行政會專班客製化決策指引：</span>
+                <ul style="margin-top: 6px; padding-left: 18px; font-size: 0.83rem; color: #cbd5e1;">
+                  ${adviceListHtml}
+                </ul>
+              </div>
             </div>
           </div>
         `;
       }
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', () => {
       renderTable(teachersData);
 
       // School Chart
